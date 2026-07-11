@@ -1,0 +1,122 @@
+services:
+  coq:
+    image: coqorg/coq:8.18
+    environment:
+      - OPAMYES=1
+    volumes:
+      - .:/home/coq/cognitive-shadow:ro
+    working_dir: /home/coq/cognitive-shadow
+    mem_limit: 12g
+    memswap_limit: 20g
+    command: |
+      bash -c '
+        set -e
+        echo ">>> Preparing writable build copy..."
+        rm -rf /tmp/build
+        cp -r /home/coq/cognitive-shadow /tmp/build
+        cd /tmp/build
+
+        echo ">>> Cleaning CRLF from .v files..."
+        find src -name "*.v" -exec sed -i "s/$(printf "\r")//g" {} \;
+
+        echo ">>> Fixing imports to use correct full Coq paths..."
+        find src -name "*.v" -exec sed -i "s/Require Import Lia\./Require Import Coq.micromega.Lia./g" {} \;
+        find src -name "*.v" -exec sed -i "s/Require Import Lra\./Require Import Coq.micromega.Lra./g" {} \;
+        find src -name "*.v" -exec sed -i "s/Require Export Lia\./Require Export Coq.micromega.Lia./g" {} \;
+        find src -name "*.v" -exec sed -i "s/Require Export Lra\./Require Export Coq.micromega.Lra./g" {} \;
+
+        echo ">>> Using existing _CoqProject from repository..."
+        if [ ! -f _CoqProject ]; then
+          echo "ERROR: _CoqProject not found in repository root!"
+          exit 1
+        fi
+
+        cat _CoqProject
+
+        echo ">>> Generating Makefile..."
+        coq_makefile -f _CoqProject -o Makefile.coq
+
+        ALL_VFILES="src/GlobalParameters.v \
+                    src/Quantum/Hilbert.v \
+                    src/Quantum/QuantumState.v \
+                    src/Phenomenological/QualiaBasis.v \
+                    src/Phenomenological/Collapse.v \
+                    src/Principles/AlgorithmicEntropy.v \
+                    src/Quantum/ChannelLimits.v \
+                    src/Quantum/QuantumQualiaMap.v \
+                    src/Quantum/QuantumErrorCorrection.v \
+                    src/Complexity/QualiaReducibility.v \
+                    src/HigherHilbert/Homotopy.v \
+                    src/Expansion/InterfacesTheorem6.v \
+                    src/Expansion/InterfacesTheorem7.v \
+                    src/Expansion/Interfaces_Deadband.v \
+                    src/Expansion/PhiFromInterfaces.v \
+                    src/Expansion/A20_MeasurementError.v \
+                    src/Expansion/PhiHierarchy.v \
+                    src/Expansion/ComputationalSynergy.v \
+                    src/Expansion/QuarantineSynergyLimit.v \
+                    src/Expansion/CascadeMergeStability.v \
+                    src/Expansion/SystemProfile.v \
+                    src/Expansion/StreamingEntropy.v \
+                    src/Expansion/ParasitismTheorem.v \
+                    src/Expansion/Theorem8_Degradation.v \
+                    src/Expansion/RecursiveStabilityTheorem.v \
+                    src/Expansion/CognitiveShadow_Complete.v"
+
+        echo ">>> Building all files strictly one by one with timeout (20 min per file)..."
+
+        for vfile in $$ALL_VFILES; do
+          [ -f "$$vfile" ] || continue
+          vofile="$${vfile%.v}.vo"
+          echo "==> [$(date)] Compiling $$vfile ..."
+          if ! timeout --signal=KILL 1200 make -f Makefile.coq -j1 "$$vofile"; then
+            echo "ERROR: Timeout or failure on $$vfile"
+            exit 1
+          fi
+        done
+
+        echo "✅ All modules compiled successfully!"
+      '
+    networks:
+      - cognitive-shadow-net
+
+  tla:
+    image: eclipse-temurin:11-jre
+    volumes:
+      - ./tla-spec:/tla-spec
+    working_dir: /tla-spec
+    command: >
+      bash -c "
+        if [ ! -f tla2tools.jar ]; then
+          wget -q https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar
+        fi &&
+        java -cp tla2tools.jar tlc2.TLC -depth 20 CognitiveShadow_Model
+      "
+    networks:
+      - cognitive-shadow-net
+
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - cognitive-shadow-net
+
+  grafana:
+    image: grafana/grafana:9.5.0
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=cognitive-shadow
+    volumes:
+      - ./monitoring/grafana:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+    networks:
+      - cognitive-shadow-net
+
+networks:
+  cognitive-shadow-net:
+    driver: bridge

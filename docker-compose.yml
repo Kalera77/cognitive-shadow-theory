@@ -1,0 +1,144 @@
+services:
+  edge-dsp:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: shadow-edge
+    entrypoint: []
+    command: ["python3", "scripts/dsp/realtime_pipeline.py"]
+    volumes:
+      - ./reports:/app/reports
+      - ./bids:/data/bids
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+      - PTP_MASTER=edge-ptp-master
+      - HSM_ENDPOINT=http://hsm-mock:8080
+      - LOG_LEVEL=INFO
+    networks:
+      - shadow-net
+    deploy:
+      resources:
+        limits:
+          cpus: "4"
+          memory: "8G"
+
+  central-verifier:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: shadow-verifier
+    entrypoint: []
+    command: ["python3", "scripts/zk/verify_groth16.py", "--help"]
+    ports:
+      - "9090:9090"
+      - "8080:8080"
+    volumes:
+      - ./zk-audit:/app/audit
+      - ./circuits:/app/circuits:ro
+    environment:
+      - AUDIT_DB_URI=sqlite:///audit.db
+      - MERKLE_ROOT_GENESIS=0x0000000000000000000000000000000000000000000000000000000000000000
+    depends_on:
+      - edge-dsp
+    networks:
+      - shadow-net
+
+  hsm-mock:
+    image: mockserver/mockserver:latest
+    container_name: shadow-hsm-mock
+    ports:
+      - "1080:1080"
+    environment:
+      - MOCKSERVER_PORT=8080
+    volumes:
+      - ./mocks/hsm_mock.json:/config/hsm_mock.json
+    networks:
+      - shadow-net
+    restart: unless-stopped
+
+  dev-shell:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: shadow-dev
+    volumes:
+      - .:/app
+    stdin_open: true
+    tty: true
+    entrypoint: ["/bin/bash"]
+    networks:
+      - shadow-net
+
+  coq:
+    image: coqorg/coq:8.18
+    container_name: shadow-coq
+    environment:
+      - OPAMYES=1
+    volumes:
+      - .:/home/coq/cognitive-shadow
+    working_dir: /home/coq/cognitive-shadow
+    command: |
+      bash -c '
+        set -e
+        if ! opam list --installed coq-flocq > /dev/null 2>&1; then
+          echo ">>> Installing coq-flocq (required for A20_ICU_NoiseBound)..."
+          opam update
+          opam install coq-flocq -y
+        else
+          echo ">>> coq-flocq already installed, skipping."
+        fi
+        echo ">>> Compiling Coq files..."
+        coq_makefile -f _CoqProject -o Makefile.coq
+        make -f Makefile.coq -j4
+        echo "✅ All Coq proofs verified."
+      '
+    networks:
+      - shadow-net
+
+  tla:
+    image: eclipse-temurin:11-jre
+    container_name: shadow-tla
+    volumes:
+      - ./tla-spec:/tla-spec
+    working_dir: /tla-spec
+    command: |
+      bash -c '
+        set -e
+        if [ ! -f tla2tools.jar ]; then
+          apt-get update && apt-get install -y wget
+          wget -q https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar
+        fi
+        echo "=== TLC Model Checking ==="
+        if [ -f "CognitiveShadow_Model.cfg" ]; then
+          echo ">>> CognitiveShadow_Model"
+          java -cp tla2tools.jar tlc2.TLC -deadlock -workers auto -config CognitiveShadow_Model.cfg CognitiveShadow_Model
+        fi
+        if [ -f "FORCED_REPORT_States.tla" ] && [ -f "FORCED_REPORT_Model.cfg" ]; then
+          echo ">>> FORCED_REPORT_States"
+          java -cp tla2tools.jar tlc2.TLC -deadlock -workers auto -config FORCED_REPORT_Model.cfg FORCED_REPORT_States
+        fi
+        echo "✅ TLC checks completed."
+      '
+    networks:
+      - shadow-net
+
+  python:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: shadow-python
+    entrypoint: ["python3"]
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
+    working_dir: /app
+    networks:
+      - shadow-net
+
+networks:
+  shadow-net:
+    driver: bridge
+    name: cognitive-shadow-network
+    external: true   # добавляем, чтобы использовать уже существующую сеть и убрать предупреждение

@@ -1,0 +1,42 @@
+TLC2 Version 2026.05.04.141011 (rev: 2097138)
+Warning: Please run the Java VM, which executes TLC with a throughput optimized garbage collector, by passing the "-XX:+UseParallelGC" property.
+(Use the -nowarning option to disable this warning.)
+Running breadth-first search Model-Checking with fp 80 and seed -4674832939560391368 with 10 workers on 10 cores with 2488MB heap and 64MB offheap memory [pid: 231] (Linux 6.6.114.1-microsoft-standard-WSL2 amd64, Eclipse Adoptium 11.0.31 64bit, MSBDiskFPSet, DiskStateQueue).
+Parsing file /tla-spec/CognitiveShadow_Model.tla
+Parsing file /tmp/tlc-7050539984215342327/Integers.tla (jar:file:/tla-spec/tla2tools.jar!/tla2sany/StandardModules/Integers.tla)
+Parsing file /tmp/tlc-7050539984215342327/FiniteSets.tla (jar:file:/tla-spec/tla2tools.jar!/tla2sany/StandardModules/FiniteSets.tla)
+Parsing file /tmp/tlc-7050539984215342327/TLC.tla (jar:file:/tla-spec/tla2tools.jar!/tla2sany/StandardModules/TLC.tla)
+Parsing file /tmp/tlc-7050539984215342327/_TLCTrace.tla (jar:file:/tla-spec/tla2tools.jar!/tla2sany/StandardModules/_TLCTrace.tla)
+Parsing file /tmp/tlc-7050539984215342327/Naturals.tla (jar:file:/tla-spec/tla2tools.jar!/tla2sany/StandardModules/Naturals.tla)
+Parsing file /tmp/tlc-7050539984215342327/Sequences.tla (jar:file:/tla-spec/tla2tools.jar!/tla2sany/StandardModules/Sequences.tla)
+Parsing file /tmp/tlc-7050539984215342327/TLCExt.tla (jar:file:/tla-spec/tla2tools.jar!/tla2sany/StandardModules/TLCExt.tla)
+Semantic processing of module Naturals
+Semantic processing of module Integers
+Semantic processing of module Sequences
+Semantic processing of module FiniteSets
+Semantic processing of module TLC
+Semantic processing of module TLCExt
+Semantic processing of module _TLCTrace
+Semantic processing of module CognitiveShadow_Model
+Linting of module TLCExt
+Linting of module _TLCTrace
+Linting of module CognitiveShadow_Model
+Starting... (2026-07-11 07:08:01)
+Implied-temporal checking--satisfiability problem has 1 branches.
+Computing initial states...
+Finished computing initial states: 1 distinct state generated at 2026-07-11 07:08:02.
+Checking temporal properties for the current state space with 76979 total distinct states at (2026-07-11 07:08:05)
+Finished checking temporal properties in 01min 22s at 2026-07-11 07:09:27
+Progress(3682) at 2026-07-11 07:09:27: 296,934 states generated (296,934 s/min), 77,003 distinct states found (77,003 ds/min), 16 states left on queue.
+Progress(10002) at 2026-07-11 07:09:31: 808,462 states generated, 209,601 distinct states found, 0 states left on queue.
+Checking temporal properties for the complete state space with 209601 total distinct states at (2026-07-11 07:09:31)
+Finished checking temporal properties in 04min 28s at 2026-07-11 07:13:59
+Model checking completed. No error has been found.
+  Estimates of the probability that TLC did not check all reachable states
+  because two distinct states had the same fingerprint:
+  calculated (optimistic):  val = 6.8E-9
+  based on the actual fingerprints:  val = 6.5E-10
+808462 states generated, 209601 distinct states found, 0 states left on queue.
+The depth of the complete state graph search is 10002.
+The average outdegree of the complete state graph is 1 (minimum is 0, the maximum 4 and the 95th percentile is 1).
+Finished in 05min 58s at (2026-07-11 07:13:59)
