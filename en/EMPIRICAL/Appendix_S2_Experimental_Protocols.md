@@ -2,7 +2,7 @@
 
 > **Status:** Updated to align with the cognitive shadow theory (version of July 8, 2026).  
 > **Contains:** Four main experimental protocols for falsification of Theorems 6–9, PsychoPy script, updated success criteria reflecting new empirical data (A, T, F), and links to formal verification of FORCED_REPORT and Shadow Ethics.  
-> **Full protocols:** Available in the repository at `github.com/Kalera77/cognitive-shadow-theorem/protocols/`.
+> **Full protocols:** Available in the repository at `github.com/Kalera77/cognitive-shadow-theory/protocols/`.
 
 ---
 
@@ -415,7 +415,7 @@ jobs:
   author = {Kalinin, Valeriy S.},
   year = {2026},
   institution = {System Engineering Research},
-  url = {https://github.com/Kalera77/cognitive-shadow-theorem},
+  url = {https://github.com/Kalera77/cognitive-shadow-theory},
   note = {Preprint, updated July 8, 2026}
 }
 ```

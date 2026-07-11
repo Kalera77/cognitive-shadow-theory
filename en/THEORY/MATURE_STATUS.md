@@ -3,7 +3,7 @@
 **Date:** July 8, 2026 (version 2.0)  
 **Author:** Valeriy S. Kalinin  
 **Status:** Epistemological declaration of maturity of the scientific programme  
-**Repository:** [github.com/Kalera77/cognitive-shadow-theorem](https://github.com/Kalera77/cognitive-shadow-theorem)
+**Repository:** [github.com/Kalera77/cognitive-shadow-theory](https://github.com/Kalera77/cognitive-shadow-theory)
 
 ---
 
@@ -421,7 +421,7 @@ This is the formal theory of the observable boundaries of consciousness.
   year = {2026},
   month = {July},
   institution = {System Engineering Research},
-  url = {https://github.com/Kalera77/cognitive-shadow-theorem},
+  url = {https://github.com/Kalera77/cognitive-shadow-theory},
   note = {Epistemological declaration, July 8, 2026},
   license = {CC BY-NC 4.0 / MIT}
 }

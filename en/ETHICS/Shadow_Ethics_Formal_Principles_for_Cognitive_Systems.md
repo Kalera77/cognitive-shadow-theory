@@ -4,7 +4,7 @@
 **Author:** Valeriy S. Kalinin  
 **Date:** July 8, 2026 (version 2.0 — integrated with Formal_Ethics_Specification)  
 **Basis:** Theorem 1′, Theorem 9, Theorem 10, Postulate P1, axioms A27–A29, dynamic parameters R, T, A, F  
-**Repository:** [github.com/Kalera77/cognitive-shadow-theorem](https://github.com/Kalera77/cognitive-shadow-theorem)  
+**Repository:** [github.com/Kalera77/cognitive-shadow-theory](https://github.com/Kalera77/cognitive-shadow-theory)  
 **License:** Text – CC BY‑NC 4.0, code – MIT
 
 ---
@@ -305,7 +305,7 @@ Shadow Ethics is not just "ethics for AI". It is **ethics that follows from the 
   year = {2026},
   month = {July},
   institution = {System Engineering Research},
-  url = {https://github.com/Kalera77/cognitive-shadow-theorem},
+  url = {https://github.com/Kalera77/cognitive-shadow-theory},
   note = {Formal specification, updated July 8, 2026},
   license = {CC BY-NC 4.0 / MIT}
 }

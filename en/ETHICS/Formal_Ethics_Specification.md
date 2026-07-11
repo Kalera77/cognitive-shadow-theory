@@ -4,7 +4,7 @@
 **Date:** July 8, 2026 (version 2.1, translated and updated)  
 **Status:** Engineering specification (verifiable in Coq 8.18+ and TLA⁺)  
 **Basis:** Theorem 1′, Theorem 9, Postulate P1, Axioms A27–A29, dynamic parameters R, T, A, F  
-**Repository:** [github.com/Kalera77/cognitive-shadow-theorem](https://github.com/Kalera77/cognitive-shadow-theorem)  
+**Repository:** [github.com/Kalera77/cognitive-shadow-theory](https://github.com/Kalera77/cognitive-shadow-theory)  
 **License:** Text – CC BY‑NC 4.0, code – MIT
 
 ---
@@ -302,7 +302,7 @@ Ethics ceases to be an external constraint and becomes a **condition for the exi
   year = {2026},
   month = {July},
   institution = {System Engineering Research},
-  url = {https://github.com/Kalera77/cognitive-shadow-theorem},
+  url = {https://github.com/Kalera77/cognitive-shadow-theory},
   note = {Engineering specification, July 8, 2026},
   license = {CC BY-NC 4.0 / MIT}
 }

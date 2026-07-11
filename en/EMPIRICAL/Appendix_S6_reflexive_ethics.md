@@ -171,7 +171,7 @@ Cognitive‑shadow theory has demonstrated a reflexive property: it describes th
   author = {Kalinin, Valeriy S.},
   year = {2026},
   institution = {System Engineering Research},
-  url = {https://github.com/Kalera77/cognitive-shadow-theorem},
+  url = {https://github.com/Kalera77/cognitive-shadow-theory},
   note = {Preprint, updated July 8, 2026}
 }
 ```

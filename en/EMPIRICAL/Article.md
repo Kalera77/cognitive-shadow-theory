@@ -389,7 +389,7 @@ We present φ as a **first‑order heuristic model** that is useful for binary d
 
 **Funding.** The study was carried out with the author’s personal support.
 
-**Data and code availability.** All source data are from public repositories. Code for reproduction is available at: https://github.com/Kalera77/cognitive-shadow-theorem
+**Data and code availability.** All source data are from public repositories. Code for reproduction is available at: https://github.com/Kalera77/cognitive-shadow-theory
 
 ---
 

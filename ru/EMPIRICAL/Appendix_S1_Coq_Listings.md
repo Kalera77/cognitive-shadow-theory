@@ -2,7 +2,7 @@
 
 > **Статус:** Актуализировано под теорию когнитивной тени (версия от 8 июля 2026 г.).  
 > **Содержит:** Перечень всех модулей Coq, выдержки ключевых определений и теорем, включая новые модули (Теорема 10, FORCED_REPORT, Shadow Ethics, матричная модель).  
-> **Полные доказательства:** доступны в репозитории `github.com/Kalera77/cognitive-shadow-theorem/src`.
+> **Полные доказательства:** доступны в репозитории `github.com/Kalera77/cognitive-shadow-theory/src`.
 
 ---
 
@@ -408,7 +408,7 @@ Lemma scalar_model_equivalence : ... (* φ_matrix при равных весах
   author = {Калинин, Валерий Сергеевич},
   year = {2026},
   institution = {System Engineering Research},
-  url = {https://github.com/Kalera77/cognitive-shadow-theorem},
+  url = {https://github.com/Kalera77/cognitive-shadow-theory},
   note = {Препринт, обновлено 8 июля 2026 г.}
 }
 ```

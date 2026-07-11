@@ -7,7 +7,7 @@
 **Автор:** Калинин Валерий Сергеевич  
 **Контакт:** kalera77@gmail.com  
 **Дата:** 10 апреля 2026 г. (обновлено 4 июля 2026 г.)  
-**Репозиторий формализации:** [github.com/Kalera77/cognitive-shadow-theorem](https://github.com/Kalera77/cognitive-shadow-theorem)  
+**Репозиторий формализации:** [github.com/Kalera77/cognitive-shadow-theory](https://github.com/Kalera77/cognitive-shadow-theory)  
 **Статус:** Препринт (готов к peer‑review)  
 **Лицензия:** Текст – CC BY‑NC 4.0, формальные модели и код – MIT
 
@@ -402,7 +402,7 @@ Theorem Liberation_Through_Acceptance :
 - **Интегрированы** в клинический протокол FORCED_REPORT (звуковость доказана в `ForcedReportDecision.v`).
 - **Согласованы** с эмпирическими результатами (GroupKFold, динамические параметры A, T, F) и Теоремой 10 (предел точности AUC).
 
-Детальные инженерные протоколы реализации и критерии нарушений приведены в **Прикладных расширениях** ([`cognitive_shadow_applications.md`](https://github.com/Kalera77/cognitive-shadow-theorem/blob/main/cognitive_shadow_applications.md)) и в спецификации **Formal_Ethics_Specification.md**.
+Детальные инженерные протоколы реализации и критерии нарушений приведены в **Прикладных расширениях** ([`cognitive_shadow_applications.md`](https://github.com/Kalera77/cognitive-shadow-theory/blob/main/cognitive_shadow_applications.md)) и в спецификации **Formal_Ethics_Specification.md**.
 
 ---
 
@@ -410,8 +410,8 @@ Theorem Liberation_Through_Acceptance :
 
 Формальные теоремы и аксиомы настоящего ядра порождают ряд проверяемых предсказаний и инженерных требований. Их полное изложение вынесено в два сопутствующих документа, чтобы сохранить математическую строгость ядра:
 
-1. **Динамическое расширение и интерфейсы** ([`cognitive_shadow_dynamics.md`](https://github.com/Kalera77/cognitive-shadow-theorem/blob/main/cognitive_shadow_dynamics.md)) – содержит аксиомы A9–A29, теоремы 2–9, динамику интерфейсов и оркестратор.
-2. **Прикладные расширения** ([`cognitive_shadow_applications.md`](https://github.com/Kalera77/cognitive-shadow-theorem/blob/main/cognitive_shadow_applications.md)) – эмпирическая программа (химическая феноменология, модель интерфейсов), фальсифицируемые предсказания, инженерные и клинические протоколы, практические рекомендации.
+1. **Динамическое расширение и интерфейсы** ([`cognitive_shadow_dynamics.md`](https://github.com/Kalera77/cognitive-shadow-theory/blob/main/cognitive_shadow_dynamics.md)) – содержит аксиомы A9–A29, теоремы 2–9, динамику интерфейсов и оркестратор.
+2. **Прикладные расширения** ([`cognitive_shadow_applications.md`](https://github.com/Kalera77/cognitive-shadow-theory/blob/main/cognitive_shadow_applications.md)) – эмпирическая программа (химическая феноменология, модель интерфейсов), фальсифицируемые предсказания, инженерные и клинические протоколы, практические рекомендации.
 
 Таким образом, данная работа задаёт единую формальную рамку, а её динамическое развитие, эмпирическая верификация и инженерная реализация вынесены в сопутствующие документы, что облегчает рецензирование и практическое использование.
 
@@ -424,7 +424,7 @@ Theorem Liberation_Through_Acceptance :
 Предложенный каркас не является окончательной теорией сознания, но предоставляет строгий язык для обсуждения его пределов и операциональные критерии для инженерных систем. Мы приглашаем научное сообщество к проверке, критике и развитию этих идей.
 
 Все исходные файлы, скрипты сборки и отчёты верификации доступны в открытом репозитории:  
-[github.com/Kalera77/cognitive-shadow-theorem](https://github.com/Kalera77/cognitive-shadow-theorem).
+[github.com/Kalera77/cognitive-shadow-theory](https://github.com/Kalera77/cognitive-shadow-theory).
 
 ---
 
@@ -453,7 +453,7 @@ Theorem Liberation_Through_Acceptance :
   author = {Калинин, Валерий Сергеевич},
   year = {2026},
   institution = {System Engineering Research},
-  url = {https://github.com/Kalera77/cognitive-shadow-theorem},
+  url = {https://github.com/Kalera77/cognitive-shadow-theory},
   note = {Препринт, 10 апреля 2026 г. (обновлено 4 июля 2026 г.)},
   license = {CC BY-NC 4.0 / MIT}
 }
@@ -462,7 +462,7 @@ Theorem Liberation_Through_Acceptance :
 **Контакты**  
 Автор: Калинин Валерий Сергеевич  
 Email: kalera77@gmail.com  
-Репозиторий: [github.com/Kalera77/cognitive-shadow-theorem](https://github.com/Kalera77/cognitive-shadow-theorem)
+Репозиторий: [github.com/Kalera77/cognitive-shadow-theory](https://github.com/Kalera77/cognitive-shadow-theory)
 
 Данный документ представляет собой препринт, подготовленный к peer‑review.  
 Все теоремы носят условный характер относительно принятых аксиом (А1–А8*, A21, A23–A26, с параметром M).  

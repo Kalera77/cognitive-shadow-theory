@@ -2,7 +2,7 @@
 
 > **Статус:** Актуализировано под теорию когнитивной тени (версия от 8 июля 2026 г.).  
 > **Содержит:** Четыре основных экспериментальных протокола для фальсификации Теорем 6–9, PsychoPy скрипт, обновлённые критерии успеха с учётом новых эмпирических данных (A, T, F), а также ссылки на формальную верификацию FORCED_REPORT и Shadow Ethics.  
-> **Полные протоколы:** доступны в репозитории `github.com/Kalera77/cognitive-shadow-theorem/protocols/`.
+> **Полные протоколы:** доступны в репозитории `github.com/Kalera77/cognitive-shadow-theory/protocols/`.
 
 ---
 
@@ -415,7 +415,7 @@ jobs:
   author = {Калинин, Валерий Сергеевич},
   year = {2026},
   institution = {System Engineering Research},
-  url = {https://github.com/Kalera77/cognitive-shadow-theorem},
+  url = {https://github.com/Kalera77/cognitive-shadow-theory},
   note = {Препринт, обновлено 8 июля 2026 г.}
 }
 ```

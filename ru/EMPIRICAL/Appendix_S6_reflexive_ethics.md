@@ -171,7 +171,7 @@ Theorem ShadowEthics_Safety_Invariant :
   author = {Калинин, Валерий Сергеевич},
   year = {2026},
   institution = {System Engineering Research},
-  url = {https://github.com/Kalera77/cognitive-shadow-theorem},
+  url = {https://github.com/Kalera77/cognitive-shadow-theory},
   note = {Препринт, обновлено 8 июля 2026 г.}
 }
 ```

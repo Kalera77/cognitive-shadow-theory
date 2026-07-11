@@ -5,7 +5,7 @@
 **Автор:** Калинин Валерий Сергеевич  
 **Контакт:** kalera77@gmail.com  
 **Дата:** 8 июля 2026 г. (обновлено с учётом Теоремы 10, формальной верификации и новых эмпирических данных)  
-**Репозиторий формализации:** [github.com/Kalera77/cognitive-shadow-theorem](https://github.com/Kalera77/cognitive-shadow-theorem)  
+**Репозиторий формализации:** [github.com/Kalera77/cognitive-shadow-theory](https://github.com/Kalera77/cognitive-shadow-theory)  
 **Статус:** Препринт (расширение ядра теории)  
 **Лицензия:** Текст – CC BY‑NC 4.0, формальные модели и код – MIT
 
@@ -19,7 +19,7 @@
 
 Представлена полная формальная верификация динамических модулей в Coq 8.18+ и TLA⁺.
 
-**Связь с ядром:** Опирается на статические аксиомы A1–A8*, A21, A23–A26, определение M и δ_min из [`cognitive_shadow_core.md`](https://github.com/Kalera77/cognitive-shadow-theorem/blob/main/cognitive_shadow_core.md).
+**Связь с ядром:** Опирается на статические аксиомы A1–A8*, A21, A23–A26, определение M и δ_min из [`cognitive_shadow_core.md`](https://github.com/Kalera77/cognitive-shadow-theory/blob/main/cognitive_shadow_core.md).
 
 ---
 
@@ -433,7 +433,7 @@ No deadlock detected
 
 ## 5. Связь с ядром и прикладными расширениями
 
-Данный документ расширяет статическое ядро теории ([`cognitive_shadow_core.md`](https://github.com/Kalera77/cognitive-shadow-theorem/blob/main/cognitive_shadow_core.md)), добавляя временну́ю эволюцию, интерфейсы и координирующий механизм (оркестратор). Все эмпирические гипотезы, фальсифицируемые предсказания и инженерные протоколы на основе этой динамики собраны в **Прикладных расширениях** ([`cognitive_shadow_applications.md`](https://github.com/Kalera77/cognitive-shadow-theorem/blob/main/cognitive_shadow_applications.md)).
+Данный документ расширяет статическое ядро теории ([`cognitive_shadow_core.md`](https://github.com/Kalera77/cognitive-shadow-theory/blob/main/cognitive_shadow_core.md)), добавляя временну́ю эволюцию, интерфейсы и координирующий механизм (оркестратор). Все эмпирические гипотезы, фальсифицируемые предсказания и инженерные протоколы на основе этой динамики собраны в **Прикладных расширениях** ([`cognitive_shadow_applications.md`](https://github.com/Kalera77/cognitive-shadow-theory/blob/main/cognitive_shadow_applications.md)).
 
 ---
 
@@ -453,7 +453,7 @@ No deadlock detected
   year = {2026},
   month = {July},
   institution = {System Engineering Research},
-  url = {https://github.com/Kalera77/cognitive-shadow-theorem},
+  url = {https://github.com/Kalera77/cognitive-shadow-theory},
   note = {Препринт, обновлено 8 июля 2026 г.},
   license = {CC BY-NC 4.0 / MIT}
 }

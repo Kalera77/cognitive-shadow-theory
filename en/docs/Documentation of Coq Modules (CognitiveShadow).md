@@ -484,7 +484,7 @@ Reflexive ethics invariant: VERIFIED
   year = {2026},
   month = {July},
   institution = {System Engineering Research},
-  url = {https://github.com/Kalera77/cognitive-shadow-theorem},
+  url = {https://github.com/Kalera77/cognitive-shadow-theory},
   note = {Updated July 9, 2026},
   license = {CC BY-NC 4.0 / MIT}
 }

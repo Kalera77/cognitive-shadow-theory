@@ -165,7 +165,7 @@ AUC для LIS vs healthy (0.947) должен оставаться стабил
   author = {Калинин, Валерий Сергеевич},
   year = {2026},
   institution = {System Engineering Research},
-  url = {https://github.com/Kalera77/cognitive-shadow-theorem},
+  url = {https://github.com/Kalera77/cognitive-shadow-theory},
   note = {Препринт, обновлено 8 июля 2026 г.}
 }
 ```

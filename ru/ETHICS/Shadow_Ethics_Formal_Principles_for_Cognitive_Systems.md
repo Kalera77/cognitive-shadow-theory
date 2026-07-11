@@ -5,7 +5,7 @@
 > **Автор:** Калинин Валерий Сергеевич  
 > **Дата:** 8 июля 2026 г. (версия 2.0 — объединение с Formal_Ethics_Specification)  
 > **Основание:** Теорема 1′, Теорема 9, Теорема 10, Постулат P1, аксиомы A27–A29, динамические параметры R, T, A, F  
-> **Репозиторий:** [github.com/Kalera77/cognitive-shadow-theorem](https://github.com/Kalera77/cognitive-shadow-theorem)  
+> **Репозиторий:** [github.com/Kalera77/cognitive-shadow-theory](https://github.com/Kalera77/cognitive-shadow-theory)  
 > **Лицензия:** Текст – CC BY‑NC 4.0, код – MIT
 
 ---
@@ -312,7 +312,7 @@ Shadow Ethics — это не просто «этика для ИИ». Это **
   year = {2026},
   month = {July},
   institution = {System Engineering Research},
-  url = {https://github.com/Kalera77/cognitive-shadow-theorem},
+  url = {https://github.com/Kalera77/cognitive-shadow-theory},
   note = {Формальная спецификация, обновлено 8 июля 2026 г.},
   license = {CC BY-NC 4.0 / MIT}
 }

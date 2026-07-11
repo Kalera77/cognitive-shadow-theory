@@ -6,7 +6,7 @@
 **Author:** Valeriy S. Kalinin  
 **Contact:** kalera77@gmail.com  
 **Date:** July 8, 2026 (updated)  
-**Formalisation Repository:** [github.com/Kalera77/cognitive-shadow-theorem](https://github.com/Kalera77/cognitive-shadow-theorem)  
+**Formalisation Repository:** [github.com/Kalera77/cognitive-shadow-theory](https://github.com/Kalera77/cognitive-shadow-theory)  
 **Status:** Preprint (ready for peer review)  
 **License:** Text – CC BY‑NC 4.0, formal models and code – MIT
 
@@ -316,8 +316,8 @@ Six principles of Shadow Ethics, formally verified in Coq (`FormalEthicsPrincipl
 
 The formal theorems and axioms of the present core generate a number of testable predictions and engineering requirements. Their full exposition is given in two companion documents:
 
-1. **Dynamic extension and interfaces** ([`cognitive_shadow_dynamics.md`](https://github.com/Kalera77/cognitive-shadow-theorem/blob/main/cognitive_shadow_dynamics.md)) – contains axioms A9–A29, Theorems 2–9, interface dynamics, and orchestrator.
-2. **Applied extensions** ([`cognitive_shadow_applications.md`](https://github.com/Kalera77/cognitive-shadow-theorem/blob/main/cognitive_shadow_applications.md)) – empirical programme (chemical phenomenology, interface model), falsifiable predictions, engineering and clinical protocols, practical recommendations.
+1. **Dynamic extension and interfaces** ([`cognitive_shadow_dynamics.md`](https://github.com/Kalera77/cognitive-shadow-theory/blob/main/cognitive_shadow_dynamics.md)) – contains axioms A9–A29, Theorems 2–9, interface dynamics, and orchestrator.
+2. **Applied extensions** ([`cognitive_shadow_applications.md`](https://github.com/Kalera77/cognitive-shadow-theory/blob/main/cognitive_shadow_applications.md)) – empirical programme (chemical phenomenology, interface model), falsifiable predictions, engineering and clinical protocols, practical recommendations.
 
 ---
 
@@ -328,7 +328,7 @@ The Theorem on the Partial Cognitive Shadow has been formulated and rigorously p
 The proposed framework is not a final theory of consciousness, but provides a rigorous language for discussing its limits and operational criteria for engineering systems. We invite the scientific community to test, critique, and develop these ideas.
 
 All source files, build scripts, and verification reports are available in the open repository:  
-[github.com/Kalera77/cognitive-shadow-theorem](https://github.com/Kalera77/cognitive-shadow-theorem).
+[github.com/Kalera77/cognitive-shadow-theory](https://github.com/Kalera77/cognitive-shadow-theory).
 
 ---
 
@@ -357,7 +357,7 @@ Verification reports are automatically generated in `reports/` upon running `mak
   author = {Kalinin, Valeriy S.},
   year = {2026},
   institution = {System Engineering Research},
-  url = {https://github.com/Kalera77/cognitive-shadow-theorem},
+  url = {https://github.com/Kalera77/cognitive-shadow-theory},
   note = {Preprint, updated July 8, 2026},
   license = {CC BY-NC 4.0 / MIT}
 }
@@ -379,6 +379,6 @@ Verification reports are automatically generated in `reports/` upon running `mak
 **Contact:**  
 Author: Valeriy S. Kalinin  
 Email: kalera77@gmail.com  
-Repository: [github.com/Kalera77/cognitive-shadow-theorem](https://github.com/Kalera77/cognitive-shadow-theorem)
+Repository: [github.com/Kalera77/cognitive-shadow-theory](https://github.com/Kalera77/cognitive-shadow-theory)
 
 ---

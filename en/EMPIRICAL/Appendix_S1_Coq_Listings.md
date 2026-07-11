@@ -2,7 +2,7 @@
 
 > **Status:** Updated to align with the cognitive shadow theory (version of July 8, 2026).  
 > **Contains:** Complete list of all Coq modules, excerpts of key definitions and theorems, including new modules (Theorem 10, FORCED_REPORT, Shadow Ethics, matrix model).  
-> **Full proofs:** Available in the repository at `github.com/Kalera77/cognitive-shadow-theorem/src`.
+> **Full proofs:** Available in the repository at `github.com/Kalera77/cognitive-shadow-theory/src`.
 
 ---
 
@@ -408,7 +408,7 @@ The excerpts presented demonstrate that all **10 theorems** of the cognitive sha
   author = {Kalinin, Valeriy S.},
   year = {2026},
   institution = {System Engineering Research},
-  url = {https://github.com/Kalera77/cognitive-shadow-theorem},
+  url = {https://github.com/Kalera77/cognitive-shadow-theory},
   note = {Preprint, updated July 8, 2026}
 }
 ```

@@ -4,7 +4,7 @@
 **Дата:** 7 июля 2026 г. (версия 2.0)  
 **Автор:** Калинин Валерий Сергеевич  
 **Статус:** Эпистемологическая декларация зрелости научной программы  
-**Репозиторий:** [github.com/Kalera77/cognitive-shadow-theorem](https://github.com/Kalera77/cognitive-shadow-theorem)
+**Репозиторий:** [github.com/Kalera77/cognitive-shadow-theory](https://github.com/Kalera77/cognitive-shadow-theory)
 
 ---
 
@@ -418,7 +418,7 @@ Shadow Ethics — это шесть архитектурных запретов,
   year = {2026},
   month = {July},
   institution = {System Engineering Research},
-  url = {https://github.com/Kalera77/cognitive-shadow-theorem},
+  url = {https://github.com/Kalera77/cognitive-shadow-theory},
   note = {Эпистемологическая декларация, 7 июля 2026 г.},
   license = {CC BY-NC 4.0 / MIT}
 }

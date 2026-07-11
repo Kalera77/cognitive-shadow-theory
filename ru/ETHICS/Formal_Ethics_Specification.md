@@ -5,7 +5,7 @@
 **Дата:** 4 июля 2026 г. (версия 2.0, дополненная и уточнённая)  
 **Статус:** Инженерная спецификация (верифицируема в Coq 8.18+ и TLA⁺)  
 **Основание:** Теорема 1′, Теорема 9, Постулат P1, Аксиомы A27–A29, динамические параметры R, T, A, F  
-**Репозиторий:** [github.com/Kalera77/cognitive-shadow-theorem](https://github.com/Kalera77/cognitive-shadow-theorem)  
+**Репозиторий:** [github.com/Kalera77/cognitive-shadow-theory](https://github.com/Kalera77/cognitive-shadow-theory)  
 **Лицензия:** Текст – CC BY‑NC 4.0, код – MIT
 
 ---
@@ -303,7 +303,7 @@ No deadlock detected
   year = {2026},
   month = {July},
   institution = {System Engineering Research},
-  url = {https://github.com/Kalera77/cognitive-shadow-theorem},
+  url = {https://github.com/Kalera77/cognitive-shadow-theory},
   note = {Инженерная спецификация, 4 июля 2026 г.},
   license = {CC BY-NC 4.0 / MIT}
 }

@@ -3,8 +3,8 @@
 **Status:** Empirical hypotheses and engineering specifications, open to falsification and verification.  
 **Author:** Valeriy S. Kalinin  
 **Date:** July 8, 2026 (updated)  
-**Relation to core and dynamics:** Based on the formal theory ([`cognitive_shadow_core.md`](https://github.com/Kalera77/cognitive-shadow-theorem/blob/main/cognitive_shadow_core.md)), dynamic extension ([`cognitive_shadow_dynamics.md`](https://github.com/Kalera77/cognitive-shadow-theorem/blob/main/cognitive_shadow_dynamics.md)), and new modules (Theorem 10, FORCED_REPORT, Shadow Ethics, matrix model).  
-**Repository:** [github.com/Kalera77/cognitive-shadow-theorem](https://github.com/Kalera77/cognitive-shadow-theorem)  
+**Relation to core and dynamics:** Based on the formal theory ([`cognitive_shadow_core.md`](https://github.com/Kalera77/cognitive-shadow-theory/blob/main/cognitive_shadow_core.md)), dynamic extension ([`cognitive_shadow_dynamics.md`](https://github.com/Kalera77/cognitive-shadow-theory/blob/main/cognitive_shadow_dynamics.md)), and new modules (Theorem 10, FORCED_REPORT, Shadow Ethics, matrix model).  
+**Repository:** [github.com/Kalera77/cognitive-shadow-theory](https://github.com/Kalera77/cognitive-shadow-theory)  
 **License:** Text – CC BY‑NC 4.0, code – MIT.
 
 ---
@@ -274,7 +274,7 @@ Modes implementing formal invariants (Section 7 of core, dynamic extension, and 
 
 ### 9. Practical Recommendations for Interface Modulation (Updated)
 
-Brief summary (full document: [`practical_recommendations.md`](https://github.com/Kalera77/cognitive-shadow-theorem/blob/main/practical_recommendations.md)):
+Brief summary (full document: [`practical_recommendations.md`](https://github.com/Kalera77/cognitive-shadow-theory/blob/main/practical_recommendations.md)):
 
 | Area | Recommendation | Target parameter | Relation to dynamic parameters |
 |------|----------------|------------------|--------------------------------|
@@ -403,7 +403,7 @@ All proofs are formally verified in Coq 8.18.0 and TLA⁺ Toolbox. Code for repr
   year = {2026},
   month = {July},
   institution = {System Engineering Research},
-  url = {https://github.com/Kalera77/cognitive-shadow-theorem},
+  url = {https://github.com/Kalera77/cognitive-shadow-theory},
   note = {Preprint, updated July 8, 2026},
   license = {CC BY-NC 4.0 / MIT}
 }

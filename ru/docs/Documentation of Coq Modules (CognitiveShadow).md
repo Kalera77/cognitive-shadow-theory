@@ -484,7 +484,7 @@ Inductive system_state :=
   year = {2026},
   month = {July},
   institution = {System Engineering Research},
-  url = {https://github.com/Kalera77/cognitive-shadow-theorem},
+  url = {https://github.com/Kalera77/cognitive-shadow-theory},
   note = {Обновлено 9 июля 2026 г.},
   license = {CC BY-NC 4.0 / MIT}
 }

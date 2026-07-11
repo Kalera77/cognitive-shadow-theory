@@ -4,7 +4,7 @@
 **Author:** Valeriy S. Kalinin  
 **Contact:** kalera77@gmail.com  
 **Date:** July 8, 2026 (updated)  
-**Repository:** [github.com/Kalera77/cognitive-shadow-theorem](https://github.com/Kalera77/cognitive-shadow-theorem)  
+**Repository:** [github.com/Kalera77/cognitive-shadow-theory](https://github.com/Kalera77/cognitive-shadow-theory)  
 **Status:** Preprint (extension of core theory)  
 **License:** Text – CC BY‑NC 4.0, formal models and code – MIT
 
@@ -18,7 +18,7 @@ This document extends the static core of the cognitive shadow theory, introducin
 
 Full formal verification of dynamic modules in Coq 8.18+ and TLA⁺ is presented.
 
-**Link to core:** Relies on static axioms A1–A8*, A21, A23–A26, definition of M and δ_min from [`cognitive_shadow_core.md`](https://github.com/Kalera77/cognitive-shadow-theorem/blob/main/cognitive_shadow_core.md).
+**Link to core:** Relies on static axioms A1–A8*, A21, A23–A26, definition of M and δ_min from [`cognitive_shadow_core.md`](https://github.com/Kalera77/cognitive-shadow-theory/blob/main/cognitive_shadow_core.md).
 
 ---
 
@@ -388,7 +388,7 @@ Dynamic parameters R, T, A, F were partially tested on empirical data:
 
 ## 5. Links to core and applied extensions
 
-This document extends the static core ([`cognitive_shadow_core.md`](https://github.com/Kalera77/cognitive-shadow-theorem/blob/main/cognitive_shadow_core.md)) and is linked to applied extensions ([`cognitive_shadow_applications.md`](https://github.com/Kalera77/cognitive-shadow-theorem/blob/main/cognitive_shadow_applications.md)).
+This document extends the static core ([`cognitive_shadow_core.md`](https://github.com/Kalera77/cognitive-shadow-theory/blob/main/cognitive_shadow_core.md)) and is linked to applied extensions ([`cognitive_shadow_applications.md`](https://github.com/Kalera77/cognitive-shadow-theory/blob/main/cognitive_shadow_applications.md)).
 
 ---
 
@@ -408,7 +408,7 @@ This document extends the static core ([`cognitive_shadow_core.md`](https://gith
   year = {2026},
   month = {July},
   institution = {System Engineering Research},
-  url = {https://github.com/Kalera77/cognitive-shadow-theorem},
+  url = {https://github.com/Kalera77/cognitive-shadow-theory},
   note = {Preprint, updated July 8, 2026},
   license = {CC BY-NC 4.0 / MIT}
 }

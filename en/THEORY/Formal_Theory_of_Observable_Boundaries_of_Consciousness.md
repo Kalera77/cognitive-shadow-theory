@@ -4,7 +4,7 @@
 **Status:** Mature methodological theory (formerly – “Principle of Signature Observability”)  
 **Author:** Valeriy S. Kalinin  
 **Date:** July 8, 2026 (updated)  
-**Repository:** [github.com/Kalera77/cognitive-shadow-theorem](https://github.com/Kalera77/cognitive-shadow-theorem)  
+**Repository:** [github.com/Kalera77/cognitive-shadow-theory](https://github.com/Kalera77/cognitive-shadow-theory)  
 **License:** Text – CC BY‑NC 4.0, code – MIT  
 **History:** Originally published as “Principle of Signature Observability of the Cognitive Shadow” (June 30, 2026). Renamed to “Formal Theory of Observable Boundaries of Consciousness” upon recognition of the maturity of the methodological framework.
 
