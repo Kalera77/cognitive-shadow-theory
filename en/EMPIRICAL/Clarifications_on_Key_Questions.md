@@ -1,4 +1,4 @@
-# Responses to Critics
+# Clarifications on Key Questions
 
 ---
 
