@@ -73,7 +73,7 @@ We invite neuroscientists, clinicians, mathematicians, philosophers, engineers, 
   title = {Теория когнитивной тени: формальные пределы оцифровки сознания},
   author = {Калинин, Валерий Сергеевич},
   year = {2026},
-  url = {https://github.com/Kalera77/cognitive-shadow-theorem}
+  url = {https://github.com/Kalera77/cognitive-shadow-theory}
 }
 
 License: texts — CC BY-NC 4.0; formal proofs — MIT.
