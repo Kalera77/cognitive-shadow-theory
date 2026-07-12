@@ -70,8 +70,8 @@ We invite neuroscientists, clinicians, mathematicians, philosophers, engineers, 
 **Citation:**
 ```bibtex
 @techreport{kalinin2026cognitive-shadow,
-  title = {Теория когнитивной тени: формальные пределы оцифровки сознания},
-  author = {Калинин, Валерий Сергеевич},
+  title = {Cognitive Shadow Theory: Formal Limits of Consciousness Digitization},
+  author = {Kalinin, Valeriy Sergeevich},
   year = {2026},
   url = {https://github.com/Kalera77/cognitive-shadow-theory}
 }
