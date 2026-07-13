@@ -14,7 +14,7 @@
 
 This document represents the **methodological level** of the triad, now an independent formal theory.
 - Theoretical level: [`cognitive_shadow_core.md`](cognitive_shadow_core.md), [`cognitive_shadow_dynamics.md`](cognitive_shadow_dynamics.md)
-- Empirical level: [`Article.md`](Article.md)
+- Empirical level: [`Article.md`](Article.md) (updated version with GroupKFold and dynamic parameters)
 - Maturity manifest: [`MATURE_STATUS.md`](MATURE_STATUS.md)
 
 ---
@@ -197,7 +197,6 @@ The dominance of components C, S, I changes depending on clinical context (for C
 4. These limits are not arbitrary but derive from fundamental physical laws (Landauer, Holevo, no‑cloning) and the axiomatics of cognitive shadow theory.
 
 The theory is not a final answer to the “hard problem of consciousness.” It is a **map of the boundaries** beyond which scientifically inaccessible territory begins — and therefore worthy of ontological modesty and ethical respect. It provides a language for discussing these boundaries and criteria for evaluating any empirical research on consciousness.
-
 Updated empirical data (GroupKFold, dynamic parameters) are consistent with the theory’s predictions and point the way to its further development — from scalar heuristics to matrix and dynamic models.
 
 ---

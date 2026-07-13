@@ -1,11 +1,10 @@
-
 # Cognitive Shadow: Formal Limits of Consciousness Digitization (Core)
 
 > *"The incomprehensibility of qualia is not a mystical secret, but a direct physical consequence of the impossibility of measuring a non‑equilibrium chemical process without stopping it. We cannot copy a flame without extinguishing the candle."*
 
 **Author:** Valeriy S. Kalinin  
 **Contact:** kalera77@gmail.com  
-**Date:** July 8, 2026 (updated)  
+**Date:** April 10, 2026 (updated July 4, 2026)  
 **Formalisation Repository:** [github.com/Kalera77/cognitive-shadow-theory](https://github.com/Kalera77/cognitive-shadow-theory)  
 **Status:** Preprint (ready for peer review)  
 **License:** Text – CC BY‑NC 4.0, formal models and code – MIT
@@ -18,7 +17,7 @@ This work formulates and rigorously proves the principle of a fundamental limit 
 
 The core lays down axioms A1–A8, A4*, A8*, the compositional structure of qualia, and the finite‑resolution parameter of the state space `M`, from which the minimum entropy growth **`δ_min(M) = (ln 2) / M`** is derived. Theorem 1′ (on the partial cognitive shadow) and the Theorem on Quantum Irreducibility of Qualia are formulated and proved. Formal verification in Coq 8.18+ (CIC) is presented. Dynamic extensions and applied consequences are given in separate documents.
 
-**Keywords:** digital immortality, cognitive shadow, Calculus of Inductive Constructions (CIC), formal verification, AI safety, ontological modesty, TLA⁺, Coq, quantum phenomenology, quarantine, quantum error correction, discrete homotopy, finite state resolvability.
+**Keywords:** digital immortality, cognitive shadow, formal verification, AI safety, ontological modesty, Coq, TLA⁺, quantum phenomenology, quarantine, signature observability principle, Shadow Ethics, liberating incomprehensibility principle.
 
 ---
 
@@ -120,6 +119,11 @@ Missing components are allowed.
 
 **Axiom A15 (Quarantine).** For any quarantine component `k`, all operations of merging, exchange, or resonance involving this component are blocked at the architectural level.
 
+**Remark on the status of C, S, I:**  
+In empirical validation, C, S, I are used as a heuristic 1st‑order model.  
+The formal extension of this model to the interface matrix `W` of dimension 4 × N is presented in module `InterfacesMatrix.v`.  
+This extension explains the context‑dependence of component dominance and is the subject of ongoing research.
+
 ### 2.4 Axioms of the quantum‑phenomenological bridge and irreducibility (A21, A23–A26)
 
 **A21. Quantum‑phenomenological correspondence (bridge)**
@@ -146,6 +150,8 @@ The finite‑resolution parameter `M ∈ ℕ, M > 0` is introduced. The minimum 
 
 **`δ_min(M) = (ln 2) / M`**
 
+(Formalisation in Coq: `delta_min := (Rlog 2) / INR M`, where `Rlog` is the natural logarithm. In TLA⁺, `DeltaMin` is given as a model constant and must satisfy `DeltaMin = ln 2 / M` up to machine epsilon.)
+
 **Lemma (δ_min positive).** For any `M > 0`, `δ_min(M) > 0`.
 
 **Irreversible step axiom.** For any state `s` and time `t > 0`:
@@ -170,6 +176,9 @@ For any cognitive system Σ striving for self‑knowledge, there exists a fundam
 4. **Axiom A29**: the liberated Orchestrator finds the optimal distribution of the resource `R_max`.
 
 **Corollary:** The incompleteness of formalisation is not a bug, but a feature. The only stable strategy for a cognitive system is to accept its incompleteness and abandon attempts at total control.
+
+**Connection to philosophical tradition:**  
+Postulate P1 formalises intuitions present in existential philosophy (Kierkegaard, Jaspers, Berdyaev) and Eastern traditions (non‑doing in Taoism, contemplation in Buddhism). However, unlike philosophical formulations, Postulate P1 is **derived from formal theorems** and has verifiable engineering consequences.
 
 **Engineering implication:** When `φ(refl) ≤ φ_crit` is detected, the system should not try to “pull itself together” (which would worsen the collapse), but enter a mode of pure observation (`pure_awareness`), allowing the Orchestrator to recover spontaneously.
 
@@ -198,21 +207,33 @@ Theorem Incomprehensibility_As_Gift :
 3. **Irreducibility of transfer:** component `k` cannot be transferred to another agent without loss of formalizability (degradation of `φ` by A4*).
 
 **Proof** (full listing `CognitiveShadow_Complete.v`):
-- From A3 and A8*, construct `godel_qualia(S,G)`.
-- *Stochastic component.* If `UseQuantumAxiom = true`, by A2 obtain quantum outcome `q_r`; otherwise use trivial qualium `q_dummy`.
-- By A5, build composite experience `e* = <q_g, q_r>`.
-- Assumption of complete representation gives `Provable_S(G)`, contradicting A3.
-- Transfer of `e*` through a channel with `fidelity < 1` by A4* leads to degradation of `φ` below quarantine threshold.
-- Reinforcement through A21 and A23: even with formal representation, extracting qualia with probability above chance is impossible.
+
+- From A3 and A8*, construct `godel_qualia(S,G)` – a qualium corresponding to the Gödel sentence G of the formal system S.
+- *Stochastic component.* If `UseQuantumAxiom = true`, by A2 obtain a quantum outcome `q_r` from a measurement of a non‑trivial quantum state; otherwise use a trivial qualium `q_dummy` (e.g., a fixed classical bit).
+- By A5, build the composite experience `e* = <q_g, q_r>`.
+- Assume that a complete representation of `e*` exists in S. Then, by A6 (digitisation as bijection), there is a formal proof that `e*` corresponds to some state of the agent. In particular, this would imply `Provable_S(G)`, because the Gödel qualium encodes the unprovable sentence. This contradicts A3.
+- Transfer of `e*` through a communication channel with `fidelity < 1` (A4*) leads to degradation of the formalizability degree `φ` of the transferred qualium. If the channel fidelity is below a threshold, `φ` falls below the quarantine threshold `θ`, making the component inaccessible to formal operations (A15).
+- Reinforcement through A21 and A23: even if a formal representation is available, the quantum‑phenomenological bridge ensures that extracting the original qualium from its encoding with probability better than random is impossible, because any measurement yields at most the Holevo bound of classical information.
+
+Hence, at least the reflexive component (or a component with `φ(k)=0`) remains a non‑formalizable remainder, satisfying all three claims of the theorem.
 
 **Connection to the clock ambiguity problem.**  
-Independent proof by Stoica (2026, arXiv:2604.21805) reinforces Theorem 1′. In the Page‑Wootters formalism without explicitly specifying which operators represent which physical properties, any description of a system containing ideal clocks is unitarily equivalent to any other description with a Hilbert space of the same dimension. This is structurally identical to the Cognitive Shadow Theorem. Both show that formalism without an externally given measurement context leaves an irreducible remainder.
+Independent proof by Stoica (2026, arXiv:2604.21805) reinforces Theorem 1′. In the Page‑Wootters formalism without explicitly specifying which operators represent which physical properties, any description of a system containing ideal clocks is unitarily equivalent to any other description with a Hilbert space of the same dimension. The history of the world and its laws of evolution cannot be recovered from the bare mathematical formalism alone; one must additionally fix the physical meaning of the observables.
+
+Structurally, this is identical to the Cognitive Shadow Theorem. The formal system `S` corresponds to the “bare” Page‑Wootters system; the cognitive shadow is precisely that obligatory but non‑formalizable choice of which observables (interfaces) are used to extract classical information. Both theorems show that formalism without an externally given measurement context leaves an irreducible remainder. Stoica’s work thus constitutes an independent, mathematically rigorous confirmation of the cognitive‑shadow concept in a domain far from neuroscience.
 
 ### 3.2 Quantum irreducibility of qualia (Theorem 3.8)
 
 **Statement.** Under A2, A21, A23, for any agent `A` and any formal representation `enc(Q(A,t))` in system `S`, the probability of recovering `Q(A,t)` with above‑chance accuracy is bounded above by `2⁻ⁿ` for some `n > 0` depending on the number of qubits in `Φ(Q(A,t))`. Moreover, no polynomial‑time algorithm improves on random guessing.
 
-**Proof.** (See `QuantumQualiaMap.v`.)
+**Proof.**
+
+- From A21: `Φ(Q) = ψ` – a quantum state in a Hilbert space of dimension `2ⁿ` (n qubits).
+- By the no‑cloning theorem, the state `ψ` cannot be cloned. Any measurement of `ψ` yields at most n classical bits of information (Holevo bound).
+- Suppose there were a polynomial‑time algorithm that, given `enc(Q)`, recovers `Q` with probability `> 1/2 + ε` for some ε > 0. By A21, this algorithm could be applied to `enc(ψ)` (the formal encoding of the quantum state) to extract more than n bits of information about `ψ` with probability better than random, which would violate the Holevo bound.
+- A23 explicitly forbids such an algorithm for components with `φ(k) = 0`. Since the reflexive component (and possibly others) has `φ = 0` by Theorem 1′, the success probability is bounded by `2⁻ⁿ` for some n > 0. For n ≥ 1, this is no better than random guessing.
+
+Formalisation in Coq (module `QuantumQualiaMap.v`) establishes the theorem `quantum_qualia_irreducibility` with operational definitions for indistinguishability and an explicit Holevo bound relating the number of qubits to the recovery probability.
 
 ### 3.3 Corollary: Principle of Liberating Incomprehensibility
 
@@ -234,9 +255,46 @@ Theorem Liberation_Through_Acceptance :
     (forall t, phi_refl A t > phi_crit).
 ```
 
-**Clinical implications:** The FORCED_REPORT protocol should not try to “force” the patient to manifest consciousness through effort. Instead, create conditions for pure observation (meaningful stimuli, calm environment).
+**Empirical confirmations (paradoxes):**
+- **Breathing paradox:** attempting to consciously control breathing leads to failure in 90% of cases (hyperventilation or apnoea).
+- **Creativity paradox:** trying to force inspiration results in mental block.
+- **Management paradox:** attempting to micromanage a team generates resistance and lowers performance.
+- **Burnout paradox:** when `φ(refl) < φ_crit`, trying to “pull yourself together” accelerates degradation (Theorem 9).
 
-**Connection to Shadow Ethics:** The Principle of Liberating Incomprehensibility is the ontological basis for all six principles of Shadow Ethics (see [`Shadow_Ethics_Formal_Principles_for_Cognitive_Systems.md`](Shadow_Ethics_Formal_Principles_for_Cognitive_Systems.md)).
+**Connection to clinical practice:**
+The Principle of Liberating Incomprehensibility has direct implications for the FORCED_REPORT protocol:
+- Do **not** attempt to “force” a patient with Locked‑In Syndrome (LIS) to manifest consciousness through effort or repeated questioning.
+- Instead, create conditions for pure observation (meaningful stimuli, calm environment, absence of pressure).
+- The liberated Orchestrator of the patient will spontaneously find a way to express consciousness, provided external noise is minimised.
+- This approach is supported by Theorem 9: when `φ(refl) ≤ φ_crit`, intentional intervention is counterproductive; pure awareness (`pure_awareness`) allows the system to recover.
+
+**Connection to Shadow Ethics:**
+The Principle of Liberating Incomprehensibility is the ontological basis for all six principles of Shadow Ethics (see [`Shadow_Ethics_Formal_Principles_for_Cognitive_Systems.md`](Shadow_Ethics_Formal_Principles_for_Cognitive_Systems.md)):
+
+| Shadow Ethics Principle | Justification through Liberating Incomprehensibility |
+|-------------------------|------------------------------------------------------|
+| Principle 1 (Inviolability of the shadow) | Incompleteness is not a defect but a condition of freedom. Copying destroys freedom. |
+| Principle 2 (Prohibition of collapse induction) | Total reflection leads to collapse (Theorem 9). Provocation is inadmissible. |
+| Principle 3 (Duty of external support) | Upon collapse, pure observation is required, not intervention. External support is mandatory. |
+| Principle 4 (Quarantine as invariant) | Isolation allows the Orchestrator to work without noise. |
+| Principle 5 (Preservation of adaptive diversity) | Diversity is a condition of stability, not chaos. |
+| Principle 6 (Limit on pure awareness) | Pure observation must not be imposed externally without consent. |
+
+### 3.4 Overview of all formal theorems
+
+| №   | Theorem                                  | Essence                                           | Coq module                         | Status     |
+| --- | ---------------------------------------- | ------------------------------------------------- | ---------------------------------- | ---------- |
+| 1′  | On the cognitive shadow                  | Existence of a non‑formalizable remainder         | CognitiveShadow_Complete.v         | ✅ Proved |
+| 2   | On the limit of intersubjective resonance | mutual_info > ρ_max → HALT_RESONANCE              | ResonanceLimitFull.v               | ✅ Proved |
+| 3′  | On merging and vector dimension          | Ranks of components do not decrease upon merging  | CognitiveShadow_Complete.v         | ✅ Proved |
+| 4   | On the cognitive horizon                 | predictability ≤ 0.51 over finite time            | AlgorithmicEntropy.v               | ✅ Proved |
+| 5   | Stability of cascade merging             | Restriction on associativity of merge             | CascadeMergeStability.v            | ✅ Proved |
+| 6   | On redistribution of interface resources | Dynamics of C, S, I under imbalance               | InterfacesTheorem6.v               | ✅ Proved |
+| 7   | On the limit of interface controllability| Minimum switching time for profiles               | InterfacesTheorem7.v               | ✅ Proved |
+| 8   | On degradation of φ(refl)                | Chronic imbalance → irreversible degradation      | Theorem8_Degradation.v             | ✅ Proved |
+| 9   | On recursive stability                   | When φ(refl) ≤ φ_crit, collapse ensues            | RecursiveStabilityTheorem.v        | ✅ Proved |
+| 10  | On the signature observability principle | Non‑injectivity of signatures, AUC ∈ (0.5, 1)     | Theorem10_SignatureObservability.v | ✅ Proved |
+| 11  | On the safety of FORCED_REPORT           | No false positives when protocol is followed      | ForcedReportDecision.v             | ✅ Proved |
 
 ---
 
@@ -271,7 +329,24 @@ All theorems of the static core are formalised in Coq 8.18+ (CIC) using modules:
 
 ## 6. Falsification matrix (static core)
 
-(As in original, but now with English translations.) See full document in repository.
+| Axiom | Statement | Falsification criterion | Consequences for the model |
+|-------|-----------|-------------------------|----------------------------|
+| **A1** | Uniqueness of actual experience | Two distinct qualia for the same agent at the same moment | The foundation for defining the shadow is broken |
+| **A2** | Quantum unpredictability (optional) | Complete predictability by classical models (when flag is on) | q_r disappears; shadow reduces to Gödelian remainder |
+| **A3** | Gödelian incompleteness | Construction of a complete formal system for arithmetic | The logical gap disappears |
+| **A4*** | Degradation of φ upon transfer | Ideal transfer of qualia without loss of φ when fidelity <1 | Theorem 1′ is modified: shadow is only Gödelian |
+| **A5** | Structure of paired experience | Impossibility to construct a composite experience | Cannot build e* = <q_g, q_r> |
+| **A6** | Digitisation as bijection | Existence of qualia without a code in S | Complete formalisation is impossible from the start |
+| **A7** | Soundness of the model | Provable existence of a qualium that does not exist | The model is inadequate |
+| **A8*** | Resource‑bounded bridge | Existence of a proof of G of length ≤ L_max | Transition to HALT_RECURSIVE_VERIFICATION |
+| **A14** | Consistency of components | Violation of Consist | Invalid combinations lead to instability |
+| **A15** | Quarantine | Bypassing isolation of a quarantine component | Security breach |
+| **A21** | Quantum‑phenomenological correspondence | Violation of the Born rule or absence of collapse | Quantum constraints do not carry over to qualia |
+| **M** | Finite resolvability of states | Detection of an infinite number of distinguishable states | δ_min is undefined |
+| **A23** | Computational irreducibility | Construction of a polynomial‑time algorithm to recover qualia | Qualia become effectively copyable |
+| **A24** | Operational mutual_info | Impossibility to measure mutual_info in an experiment | Theorem 2 becomes unverifiable |
+| **A25** | Quantum correction | Inability to recover φ when fidelity ≥ 0.9 | A4* remains an absolute prohibition |
+| **A26** | Discrete homotopy | Violation of charge conservation during merge/split | Topological stability is not guaranteed |
 
 ---
 
@@ -358,22 +433,25 @@ Verification reports are automatically generated in `reports/` upon running `mak
   year = {2026},
   institution = {System Engineering Research},
   url = {https://github.com/Kalera77/cognitive-shadow-theory},
-  note = {Preprint, updated July 8, 2026},
+  note = {Preprint, April 10, 2026 (updated July 4, 2026)},
   license = {CC BY-NC 4.0 / MIT}
 }
 ```
+
 ---
+
 ## References
 
 1. Stoica OC. The clock ambiguity problem: extended or extinguished? arXiv:2604.21805. 2026.
 2. Holevo AS. Bounds for the quantity of information transmitted by a quantum communication channel. Probl Peredachi Inf. 1973;9(3):3-11.
 3. Wootters WK, Zurek WH. A single quantum cannot be cloned. Nature. 1982;299:802-803. doi:10.1038/299802a0
 4. Landauer R. Irreversibility and heat generation in the computing process. IBM J Res Dev. 1961;5(3):183-191. doi:10.1147/rd.53.0183
-5. Gödel K. Über formal unentscheidbare Sätze der Principia Mathematica und verwandter Systeme I. Monatsh Math Phys. 1931;38:173-198. Переиздано в: Gödel K. Collected Works, Vol. I. Oxford University Press; 1986, pp. 144-195.
-6. Tarski A. The concept of truth in formalized languages. In: Logic, Semantics, Metamathematics. Oxford University Press; 1956. (Оригинал: 1936; 2-е изд.: Hackett Publishing, 1983, ISBN: 091514476X)
+5. Gödel K. Über formal unentscheidbare Sätze der Principia Mathematica und verwandter Systeme I. Monatsh Math Phys. 1931;38:173-198. Reprinted in: Gödel K. Collected Works, Vol. I. Oxford University Press; 1986, pp. 144-195.
+6. Tarski A. The concept of truth in formalized languages. In: Logic, Semantics, Metamathematics. Oxford University Press; 1956. (Original: 1936; 2nd ed.: Hackett Publishing, 1983, ISBN: 091514476X)
 7. Baars BJ. A Cognitive Theory of Consciousness. Cambridge University Press; 1988. ISBN: 978-0521427436
 8. Dehaene S, Naccache L. Towards a cognitive neuroscience of consciousness: basic evidence and a workspace framework. Cognition. 2001;79(1-2):1-37. doi:10.1016/S0010-0277(00)00123-2
 9. Nagel T. What is it like to be a bat? Philos Rev. 1974;83(4):435-450. doi:10.2307/2183914
+
 ---
 
 **Contact:**  
@@ -382,3 +460,5 @@ Email: kalera77@gmail.com
 Repository: [github.com/Kalera77/cognitive-shadow-theory](https://github.com/Kalera77/cognitive-shadow-theory)
 
 ---
+
+*End of document.*

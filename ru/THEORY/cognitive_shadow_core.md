@@ -294,6 +294,7 @@ Theorem Liberation_Through_Acceptance :
 | 8   | О деградации φ(refl)                     | Хронический дисбаланс → необратимая деградация | Theorem8_Degradation.v             | ✅ Доказана |
 | 9   | О рекурсивной устойчивости               | При φ(refl) ≤ φ_crit наступает коллапс         | RecursiveStabilityTheorem.v        | ✅ Доказана |
 | 10  | О принципе наблюдаемости сигнатур        | Неинъективность сигнатур, AUC ∈ (0.5, 1)       | Theorem10_SignatureObservability.v | ✅ Доказана |
+| 11  | О безопасности FORCED_REPORT | Отсутствие ложноположительных диагнозов при соблюдении протокола | ForcedReportDecision.v | ✅ Доказана |
 
 ---
 

@@ -234,7 +234,7 @@ To assess the generalisability of the φ index, we performed cross-dataset testi
 |---------|-------------------|-------|
 | C (capacity) | 0.394 | 39.4% |
 | S (selectivity) | 0.289 | 28.9% |
-| φ_full | 0.187 | 18.7% |
+| φ | 0.187 | 18.7% |
 | I (integrity) | 0.131 | 13.1% |
 
 ### 3.5. Anaesthesia hysteresis
@@ -334,7 +334,7 @@ The previously proposed FORCED_REPORT protocol uses multimodal voting (BCI, pupi
 Based on analysis of 265,956 epochs from 9 independent datasets with correct subject‑wise cross‑validation, we have shown that the reflexive index φ = (C·S·I)^(1/3):
 
 1. **Reliably detects LIS** (AUC = 0.947), confirming its clinical utility for screening “hidden” consciousness.
-2. **Is not validated for grading DOC** (non‑significant differences between VS, MCS−, MCS+; lack of correlation with CRS‑R).
+2. **Is not validated for clinical grading of DOC** (non‑significant Kruskal‑Wallis test, p=0.152; lack of correlation with CRS‑R), although pairwise AUCs (0.742–0.848) indicate partial discrimination that warrants further investigation with matrix and dynamic models.
 3. **Is specific** (does not confuse consciousness with epilepsy, sex, or hand movement).
 4. **Confirms anaesthesia hysteresis** (p = 0.902 between LOC and ROC), consistent with Theorem 8 on irreversible interface degradation.
 5. **Opens the way to dynamic extensions** – parameter A (awareness) has already received empirical support (p = 0.045).
