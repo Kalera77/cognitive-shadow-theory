@@ -1,0 +1,27 @@
+﻿TLC2 Version 2.19 of 08 August 2024 (rev: 5a47802)
+Running breadth-first search Model-Checking with fp 38 and seed 2131227845427030789 with 4 workers on 16 cores with 3356MB heap and 64MB offheap memory [pid: 2464] (Windows 11 10.0 amd64, Eclipse Adoptium 17.0.20.1 x86_64, MSBDiskFPSet, DiskStateQueue).
+Parsing file D:\cognitive-shadow-theorem\tla-spec\ShadowEthicsInvariants.tla
+Parsing file C:\Users\Valery\AppData\Local\Temp\Integers.tla
+Parsing file C:\Users\Valery\AppData\Local\Temp\FiniteSets.tla
+Parsing file C:\Users\Valery\AppData\Local\Temp\TLC.tla
+Parsing file C:\Users\Valery\AppData\Local\Temp\Naturals.tla
+Parsing file C:\Users\Valery\AppData\Local\Temp\Sequences.tla
+Semantic processing of module Naturals
+Semantic processing of module Integers
+Semantic processing of module Sequences
+Semantic processing of module FiniteSets
+Semantic processing of module TLC
+Semantic processing of module ShadowEthicsInvariants
+Starting... (2026-09-12 11:55:14)
+Computing initial states...
+Finished computing initial states: 1 distinct state generated at 2026-09-12 11:55:14.
+Progress(10) at 2026-09-12 11:55:17: 775�308 states generated (775�308 s/min), 86�447 distinct states found (86�447 ds/min), 43�191 states left on queue.
+Model checking completed. No error has been found.
+  Estimates of the probability that TLC did not check all reachable states
+  because two distinct states had the same fingerprint:
+  calculated (optimistic):  val = 1.7E-7
+  based on the actual fingerprints:  val = 1.0E-10
+7545001 states generated, 450000 distinct states found, 0 states left on queue.
+The depth of the complete state graph search is 23.
+The average outdegree of the complete state graph is 1 (minimum is 0, the maximum 16 and the 95th percentile is 4).
+Finished in 14s at (2026-09-12 11:55:27)

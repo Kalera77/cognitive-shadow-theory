@@ -102,11 +102,13 @@ ExitQuarantine ==
   /\ UNCHANGED <<scores, theta_adj, phi, H>>
 
 UpdateEnv ==
-  /\ state \in {"MONITORING", "DEGRADED"}
-  /\ state' = state
+  /\ state \in {"MONITORING", "DEGRADED", "LOCKED", "UNCONSCIOUS", "QUARANTINE"}
   /\ phi' \in 0..100
   /\ H' \in 0..100
-  /\ UNCHANGED <<scores, ext_support, timer, theta_adj>>
+  /\ IF state = "QUARANTINE" /\ phi' > theta_adj
+     THEN state' = "MONITORING"
+     ELSE state' = state
+  /\ UNCHANGED <<scores, ext_support, timer>>
 
 Next == AdaptTheta \/ Trigger \/ Evaluate \/ Decide \/ Quarantine \/ Degraded \/ Recover \/ ExitQuarantine
         \* \/ UpdateEnv   \* временно отключаем для ограничения пространства состояний

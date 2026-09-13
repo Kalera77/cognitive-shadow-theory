@@ -89,10 +89,12 @@ ExitQuarantine ==
   /\ UNCHANGED <<scores, phi, H>>
 
 UpdateEnv ==
-  /\ state \in {"MONITORING", "DEGRADED"}
-  /\ state' = state
+  /\ state \in {"MONITORING", "DEGRADED", "LOCKED", "UNCONSCIOUS", "QUARANTINE"}
   /\ phi' \in 0..100
   /\ H' \in 0..100
+  /\ IF state = "QUARANTINE" /\ phi' > theta_adj
+     THEN state' = "MONITORING"
+     ELSE state' = state
   /\ UNCHANGED <<scores, ext_support, timer>>
 
 Next == Trigger \/ Evaluate \/ Decide \/ Quarantine \/ Degraded \/ Recover \/ UpdateEnv \/ ExitQuarantine

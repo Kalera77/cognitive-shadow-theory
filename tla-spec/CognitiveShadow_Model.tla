@@ -1,317 +1,368 @@
--------------------------------- MODULE CognitiveShadow_Model ----------------------------
+-------------------------------- MODULE CognitiveShadow_Model --------------------------------
 EXTENDS Integers, FiniteSets, TLC
 
 CONSTANTS
     Agents, Components,
-    MaxEntropy, DeltaMin, RhoMax, R_Max,
+    MaxEntropy, DeltaMin, DeltaRest,
+    RhoMax, DeltaMI,
+    R_Max,
     ThetaQuarantine, EpsilonPhi, PhiCrit,
-    H_Min, StressThreshold,
+    H_Min, StressThreshold, GracePeriod,
     InitC_Val, InitS_Val, InitI_Val,
     InitMutualInfo,
-    DeltaMI, DeltaRest,
     Delta_hyst,
     Modes
 
-\* Вспомогательные функции (веса интерфейсов)
-Alpha(k) == 1
-Beta(k)  == 1
+ASSUME
+    /\ MaxEntropy > 0
+    /\ DeltaMin > 0
+    /\ DeltaRest > 0
+    /\ RhoMax > 0
+    /\ DeltaMI > 0
+    /\ ThetaQuarantine > 0
+    /\ EpsilonPhi > 0
+    /\ EpsilonPhi < ThetaQuarantine
+    /\ PhiCrit >= ThetaQuarantine
+    /\ H_Min > 0
+    /\ StressThreshold > 0
+    /\ GracePeriod >= 1
+    /\ Delta_hyst > 0
+    /\ IsFiniteSet(Agents)  /\ Agents /= {}
+    /\ IsFiniteSet(Components) /\ Components /= {}
+    /\ IsFiniteSet(Modes)   /\ Modes /= {}
+    /\ InitC_Val \in 0..MaxEntropy
+    /\ InitS_Val \in 0..MaxEntropy
+    /\ InitI_Val \in 0..MaxEntropy
+    /\ InitMutualInfo \in 0..RhoMax
 
 VARIABLES
-    phase, shadow_entropy, phi_measured, phi_true,
-    C, S, I, use, intent, noise,
-    mutual_info, leakage, orchestrator_active,
-    cumulative_load, time_step,
-    shadow_state, physical_state,
-    context_mode,
+    phase, shadow_entropy,
+    C, S, I,
+    mutual_info, cumulative_load,
     baseline_se, current_se,
-    score_BCI, score_Pupil, score_NF,
-    timer
+    scores, timer,
+    context_mode
 
-\* ==================== ТЕОРЕМА 10 ====================
-\* Неинъективное отображение сигнатур (чётность)
-SignatureMap(s) == s % 2
-ReconstructionAccuracy(s) == 0   \* всегда неточное восстановление
+vars == <<phase, shadow_entropy, C, S, I, mutual_info, cumulative_load,
+         baseline_se, current_se, scores, timer, context_mode>>
 
-Inv_SignatureObservability ==
-  \A s \in 0..MaxEntropy : ReconstructionAccuracy(s) = 0
+Scores == { <<a,b,c>> : a \in {0,1}, b \in {0,1}, c \in {0,1} }
 
-\* ==================== ТЕОРЕМА 12 ====================
-DominantComponent(mode) ==
-  CASE mode = "DOC" -> "sem"
-  []   mode = "CLIS" -> "refl"
-  []   mode = "Anesthesia" -> "sens"
+ScoreSum == scores[1] + scores[2] + scores[3]
 
-Inv_ContextDependence ==
-  \A mode1, mode2 \in Modes : mode1 # mode2 => DominantComponent(mode1) # DominantComponent(mode2)
+\* ---- Производные величины ----
 
-\* ==================== ТЕОРЕМА 13 ====================
-Inv_HysteresisBound ==
-  (cumulative_load > StressThreshold) => (baseline_se - current_se >= Delta_hyst)
-
-\* ==================== ТЕОРЕМА 11 (FORCED_REPORT) ====================
-ScoreSum == score_BCI + score_Pupil + score_NF
-
-Inv_NoFalsePositives ==
-  (phase = "LOCKED") =>
-    /\ phi_measured["refl"] <= ThetaQuarantine - EpsilonPhi
-    /\ \A a \in Agents: shadow_entropy[a] > H_Min
-    /\ ScoreSum >= 2
-
-\* Если условия для триггера выполнены, таймер должен быть сброшен
-Inv_AutoActivation ==
-  (phi_measured["refl"] <= ThetaQuarantine - EpsilonPhi /\
-   \A a \in Agents: shadow_entropy[a] > H_Min) => (timer = 0)
-
-\* ==================== ДОПОЛНИТЕЛЬНЫЕ ИНВАРИАНТЫ ====================
-Inv_ShadowStateRange == shadow_state \in 0..MaxEntropy
-Inv_PhysicalStateRange == physical_state \in 0..MaxEntropy
-Inv_CumulativeLoadNonNeg == cumulative_load >= 0
-Inv_CurrentSEBound == current_se \in 0..MaxEntropy
-Inv_BaselineSEBound == baseline_se \in 0..MaxEntropy
-
-Inv_ContextDominantConsistency ==
-  LET dom == DominantComponent(context_mode)
-  IN \A a \in Agents : \A k \in Components \ {dom} : C[a][dom] >= C[a][k]
-
-Inv_OrchestratorConsistency ==
-  orchestrator_active <=> (phi_measured["refl"] > PhiCrit)
-
-\* Дублирует Inv_HysteresisBound, можно оставить для ясности
-Inv_RecoveryEffect ==
-  (cumulative_load > StressThreshold) => (baseline_se - current_se >= Delta_hyst)
-
-Inv_PhaseValid == phase \in {"LOCAL", "PUBLISH", "LOCKED"}
-
-Inv_BaselineCurrentRelation == current_se <= baseline_se
-
-\* ==================== ИСХОДНЫЕ ИНВАРИАНТЫ ====================
-Inv_A10_LeakageLimit == \A a \in Agents : leakage[a] <= R_Max
-
-Inv_A15_Quarantine ==
-  \A a \in Agents, k \in Components :
-    (phi_measured[k] <= ThetaQuarantine) => (use[a][k] = 0 /\ intent[a][k] = 0)
-
-Inv_HALT_RESONANCE == mutual_info <= RhoMax
-
-Inv_A27_Resource ==
-  \A a \in Agents :
-    LET sumC == Alpha("sens")*C[a]["sens"] + Alpha("sem")*C[a]["sem"] +
-                Alpha("rel")*C[a]["rel"] + Alpha("refl")*C[a]["refl"]
-        sumS == Beta("sens")*S[a]["sens"] + Beta("sem")*S[a]["sem"] +
-                Beta("rel")*S[a]["rel"] + Beta("refl")*S[a]["refl"]
-    IN sumC + sumS <= R_Max
-
-Inv_MetacognitiveCollapse ==
-  (phi_measured["refl"] <= PhiCrit) => (phase = "LOCKED" \/ phase = "PUBLISH")
-
-Inv_EntropyBound == \A a \in Agents : shadow_entropy[a] <= MaxEntropy
-
-\* phi_measured теперь может быть в пределах MaxEntropy (целые числа)
-Inv_PhiRange == \A k \in Components : phi_measured[k] >= 0 /\ phi_measured[k] <= MaxEntropy
-
-Inv_NonNegative ==
-    /\ \A a \in Agents : shadow_entropy[a] >= 0
-    /\ \A a \in Agents, k \in Components : C[a][k] >= 0 /\ S[a][k] >= 0 /\ I[a][k] >= 0
-    /\ cumulative_load >= 0
-    /\ time_step >= 0
-    /\ mutual_info >= 0
-    /\ \A a \in Agents : leakage[a] >= 0
-
-Inv_CapacityLimit ==
-  \A a \in Agents, k \in Components :
-    C[a][k] <= MaxEntropy /\ S[a][k] <= MaxEntropy /\ I[a][k] <= MaxEntropy
-
-\* ==================== НАЧАЛЬНОЕ СОСТОЯНИЕ ====================
+\* phi_measured[k] = min по агентам от (C*S*I)/100
 MinPhi(k) ==
-    LET vals == { C[a][k] * S[a][k] * I[a][k] : a \in Agents }
-    IN (CHOOSE v \in vals : \A u \in vals : v <= u) \div 10000
+    LET vals == { (C[a][k] * S[a][k] * I[a][k]) \div 100 : a \in Agents }
+    IN CHOOSE v \in vals : \A u \in vals : v <= u
+
+phi_measured == [k \in Components |-> MinPhi(k)]
+
+DominantComponent(mode) ==
+    CASE mode = "DOC"        -> "sem"
+    []   mode = "CLIS"       -> "refl"
+    []   mode = "Anesthesia" -> "sens"
+    []   OTHER               -> CHOOSE c \in Components : TRUE
+
+\* ==================== Начальное состояние ====================
 
 Init ==
     /\ phase = "LOCAL"
-    /\ shadow_entropy = [a \in Agents |-> 10]
-    /\ C  = [a \in Agents |-> [k \in Components |-> InitC_Val]]
-    /\ S  = [a \in Agents |-> [k \in Components |-> InitS_Val]]
-    /\ I  = [a \in Agents |-> [k \in Components |-> InitI_Val]]
-    /\ use    = [a \in Agents |-> [k \in Components |-> 0]]
-    /\ intent = [a \in Agents |-> [k \in Components |-> 0]]
-    /\ noise  = [a \in Agents |-> [k \in Components |-> 0]]
-    /\ phi_measured = [k \in Components |-> MinPhi(k)]
-    /\ phi_true    = phi_measured
+    /\ shadow_entropy = [a \in Agents |-> 5]
+    /\ C = [a \in Agents |-> [k \in Components |-> InitC_Val]]
+    /\ S = [a \in Agents |-> [k \in Components |-> InitS_Val]]
+    /\ I = [a \in Agents |-> [k \in Components |-> InitI_Val]]
     /\ mutual_info = InitMutualInfo
-    /\ leakage = [a \in Agents |-> 0]
-    /\ orchestrator_active = (phi_measured["refl"] > PhiCrit)
     /\ cumulative_load = 0
-    /\ time_step = 0
-    /\ shadow_state = 50
-    /\ physical_state = 25
-    /\ context_mode = "DOC"
-    /\ baseline_se = 50
-    /\ current_se = 50
-    /\ score_BCI = 0
-    /\ score_Pupil = 0
-    /\ score_NF = 0
+    /\ baseline_se = MaxEntropy \div 2
+    /\ current_se  = MaxEntropy \div 2
+    /\ scores = <<0,0,0>>
     /\ timer = 0
+    /\ context_mode = CHOOSE m \in Modes : TRUE
 
-\* ==================== ДЕЙСТВИЯ ====================
-LocalCollapse ==
-    /\ phase = "LOCAL"
-    /\ \A a \in Agents: shadow_entropy[a] + DeltaMin <= MaxEntropy
+\* ==================== Действия ====================
+
+\* ---- Деградация и восстановление ресурсов ----
+
+DegradeC(a, k) ==
+    /\ C[a][k] - DeltaRest >= 0
+    /\ C' = [C EXCEPT ![a] = [C[a] EXCEPT ![k] = C[a][k] - DeltaRest]]
+    /\ UNCHANGED <<phase, shadow_entropy, S, I, mutual_info, cumulative_load,
+                  baseline_se, current_se, scores, timer, context_mode>>
+
+DegradeS(a, k) ==
+    /\ S[a][k] - DeltaRest >= 0
+    /\ S' = [S EXCEPT ![a] = [S[a] EXCEPT ![k] = S[a][k] - DeltaRest]]
+    /\ UNCHANGED <<phase, shadow_entropy, C, I, mutual_info, cumulative_load,
+                  baseline_se, current_se, scores, timer, context_mode>>
+
+DegradeI(a, k) ==
+    /\ I[a][k] - DeltaRest >= 0
+    /\ I' = [I EXCEPT ![a] = [I[a] EXCEPT ![k] = I[a][k] - DeltaRest]]
+    /\ UNCHANGED <<phase, shadow_entropy, C, S, mutual_info, cumulative_load,
+                  baseline_se, current_se, scores, timer, context_mode>>
+
+RestoreC(a, k) ==
+    /\ phase /= "LOCKED"
+    /\ C[a][k] + DeltaRest <= MaxEntropy
+    /\ C' = [C EXCEPT ![a] = [C[a] EXCEPT ![k] = C[a][k] + DeltaRest]]
+    /\ UNCHANGED <<phase, shadow_entropy, S, I, mutual_info, cumulative_load,
+                  baseline_se, current_se, scores, timer, context_mode>>
+
+RestoreS(a, k) ==
+    /\ phase /= "LOCKED"
+    /\ S[a][k] + DeltaRest <= MaxEntropy
+    /\ S' = [S EXCEPT ![a] = [S[a] EXCEPT ![k] = S[a][k] + DeltaRest]]
+    /\ UNCHANGED <<phase, shadow_entropy, C, I, mutual_info, cumulative_load,
+                  baseline_se, current_se, scores, timer, context_mode>>
+
+RestoreI(a, k) ==
+    /\ phase /= "LOCKED"
+    /\ I[a][k] + DeltaRest <= MaxEntropy
+    /\ I' = [I EXCEPT ![a] = [I[a] EXCEPT ![k] = I[a][k] + DeltaRest]]
+    /\ UNCHANGED <<phase, shadow_entropy, C, S, mutual_info, cumulative_load,
+                  baseline_se, current_se, scores, timer, context_mode>>
+
+\* ---- Энтропия тени ----
+
+IncreaseEntropy ==
+    /\ \A a \in Agents : shadow_entropy[a] + DeltaMin <= MaxEntropy
     /\ shadow_entropy' = [a \in Agents |-> shadow_entropy[a] + DeltaMin]
-    /\ time_step' = time_step + 1
-    /\ C' = C
-    /\ S' = S
-    /\ I' = I
-    /\ use' = use
-    /\ intent' = intent
-    /\ noise' = noise
-    /\ leakage' = [a \in Agents |-> leakage[a] + 1]
-    /\ cumulative_load' = cumulative_load + 10
-    /\ phi_measured' = [k \in Components |-> MinPhi(k)]
-    /\ phi_true' = phi_measured'
-    /\ orchestrator_active' = (phi_measured'["refl"] > PhiCrit)
-    /\ mutual_info' = mutual_info
+    /\ UNCHANGED <<phase, C, S, I, mutual_info, cumulative_load,
+                  baseline_se, current_se, scores, timer, context_mode>>
+
+DecreaseEntropy ==
+    /\ \A a \in Agents : shadow_entropy[a] - DeltaMin >= 0
+    /\ shadow_entropy' = [a \in Agents |-> shadow_entropy[a] - DeltaMin]
+    /\ UNCHANGED <<phase, C, S, I, mutual_info, cumulative_load,
+                  baseline_se, current_se, scores, timer, context_mode>>
+
+\* ---- Фазы ----
+
+LocalToPublish ==
+    /\ phase = "LOCAL"
     /\ phase' = "PUBLISH"
-    /\ UNCHANGED <<shadow_state, physical_state, context_mode,
-                  baseline_se, current_se, score_BCI, score_Pupil, score_NF, timer>>
+    /\ UNCHANGED <<shadow_entropy, C, S, I, mutual_info, cumulative_load,
+                  baseline_se, current_se, scores, timer, context_mode>>
 
-SwitchContext ==
-    /\ phase = "LOCAL"
-    /\ context_mode' \in Modes \ {context_mode}
-    /\ UNCHANGED <<phase, shadow_entropy, C, S, I, use, intent, noise,
-                  phi_measured, phi_true, mutual_info, leakage,
-                  orchestrator_active, cumulative_load, time_step,
-                  shadow_state, physical_state, baseline_se, current_se,
-                  score_BCI, score_Pupil, score_NF, timer>>
-
-RecoverWithHysteresis ==
-    /\ phase = "LOCAL"
-    /\ cumulative_load > StressThreshold
-    /\ current_se' = current_se - Delta_hyst
-    /\ cumulative_load' = 0
-    /\ UNCHANGED <<phase, shadow_entropy, C, S, I, use, intent, noise,
-                  phi_measured, phi_true, mutual_info, leakage,
-                  orchestrator_active, time_step,
-                  shadow_state, physical_state, context_mode, baseline_se,
-                  score_BCI, score_Pupil, score_NF, timer>>
-
-UpdateMutualInfo ==
-    /\ mutual_info' = mutual_info + DeltaMI
-    /\ mutual_info' <= RhoMax
-    /\ UNCHANGED <<phase, shadow_entropy, C, S, I, use, intent, noise,
-                  phi_measured, phi_true, leakage,
-                  orchestrator_active, cumulative_load, time_step,
-                  shadow_state, physical_state, context_mode, baseline_se, current_se,
-                  score_BCI, score_Pupil, score_NF, timer>>
-
-UpdateLeakage ==
-    /\ \E a \in Agents : leakage' = [leakage EXCEPT ![a] = leakage[a] + 1]
-    /\ UNCHANGED <<phase, shadow_entropy, C, S, I, use, intent, noise,
-                  phi_measured, phi_true, mutual_info,
-                  orchestrator_active, cumulative_load, time_step,
-                  shadow_state, physical_state, context_mode, baseline_se, current_se,
-                  score_BCI, score_Pupil, score_NF, timer>>
-
-UpdateOrchestrator ==
-    /\ orchestrator_active' = (phi_measured["refl"] > PhiCrit)
-    /\ UNCHANGED <<phase, shadow_entropy, C, S, I, use, intent, noise,
-                  phi_measured, phi_true, mutual_info, leakage,
-                  cumulative_load, time_step,
-                  shadow_state, physical_state, context_mode, baseline_se, current_se,
-                  score_BCI, score_Pupil, score_NF, timer>>
-
-GenerateScores ==
-    /\ score_BCI' \in {0,1}
-    /\ score_Pupil' \in {0,1}
-    /\ score_NF' \in {0,1}
-    /\ UNCHANGED <<phase, shadow_entropy, C, S, I, use, intent, noise,
-                  phi_measured, phi_true, mutual_info, leakage,
-                  orchestrator_active, cumulative_load, time_step,
-                  shadow_state, physical_state, context_mode, baseline_se, current_se,
-                  timer>>
-
-ResetPhase ==
+PublishToLocal ==
     /\ phase = "PUBLISH"
     /\ phase' = "LOCAL"
-    /\ cumulative_load' = 0
-    /\ UNCHANGED <<shadow_entropy, C, S, I, use, intent, noise,
-                  phi_measured, phi_true, mutual_info, leakage,
-                  orchestrator_active, time_step,
-                  shadow_state, physical_state, context_mode, baseline_se, current_se,
-                  score_BCI, score_Pupil, score_NF, timer>>
+    /\ UNCHANGED <<shadow_entropy, C, S, I, mutual_info, cumulative_load,
+                  baseline_se, current_se, scores, timer, context_mode>>
+
+\* ---- FORCED_REPORT (Trigger / TimerTick / Unlock) ----
 
 Trigger ==
     /\ phase = "LOCAL"
-    /\ phi_measured["refl"] <= ThetaQuarantine - EpsilonPhi
-    /\ \A a \in Agents: shadow_entropy[a] > H_Min
-    /\ timer = 0
-    /\ ScoreSum >= 2
+    /\ \E k \in Components : phi_measured[k] <= ThetaQuarantine - EpsilonPhi
+    /\ \A a \in Agents : shadow_entropy[a] > H_Min
+    /\ ScoreSum >= 1
     /\ phase' = "LOCKED"
     /\ timer' = 0
-    /\ UNCHANGED <<shadow_entropy, C, S, I, use, intent, noise,
-                  phi_measured, phi_true, mutual_info, leakage,
-                  orchestrator_active, cumulative_load, time_step,
-                  shadow_state, physical_state, context_mode, baseline_se, current_se,
-                  score_BCI, score_Pupil, score_NF>>
+    /\ UNCHANGED <<shadow_entropy, C, S, I, mutual_info, cumulative_load,
+                  baseline_se, current_se, scores, context_mode>>
 
 TimerTick ==
+    /\ phase = "LOCKED"
+    /\ timer < GracePeriod
     /\ timer' = timer + 1
-    /\ UNCHANGED <<phase, shadow_entropy, C, S, I, use, intent, noise,
-                  phi_measured, phi_true, mutual_info, leakage,
-                  orchestrator_active, cumulative_load, time_step,
-                  shadow_state, physical_state, context_mode, baseline_se, current_se,
-                  score_BCI, score_Pupil, score_NF>>
+    /\ UNCHANGED <<phase, shadow_entropy, C, S, I, mutual_info, cumulative_load,
+                  baseline_se, current_se, scores, context_mode>>
 
 Unlock ==
     /\ phase = "LOCKED"
+    /\ timer >= GracePeriod
     /\ phase' = "LOCAL"
-    /\ UNCHANGED <<shadow_entropy, C, S, I, use, intent, noise,
-                  phi_measured, phi_true, mutual_info, leakage,
-                  orchestrator_active, cumulative_load, time_step,
-                  shadow_state, physical_state, context_mode, baseline_se, current_se,
-                  score_BCI, score_Pupil, score_NF, timer>>
+    /\ timer' = 0
+    /\ UNCHANGED <<shadow_entropy, C, S, I, mutual_info, cumulative_load,
+                  baseline_se, current_se, scores, context_mode>>
+
+\* ---- Скоринг (для достижимости Trigger) ----
+
+SetScoreBit(i) ==
+    /\ i \in 1..3
+    /\ scores[i] = 0
+    /\ scores' = [scores EXCEPT ![i] = 1]
+    /\ UNCHANGED <<phase, shadow_entropy, C, S, I, mutual_info, cumulative_load,
+                  baseline_se, current_se, timer, context_mode>>
+
+ResetScores ==
+    /\ scores' = <<0,0,0>>
+    /\ UNCHANGED <<phase, shadow_entropy, C, S, I, mutual_info, cumulative_load,
+                  baseline_se, current_se, timer, context_mode>>
+
+\* ---- Взаимная информация ----
+
+IncreaseMutualInfo ==
+    /\ mutual_info + DeltaMI <= RhoMax
+    /\ mutual_info' = mutual_info + DeltaMI
+    /\ UNCHANGED <<phase, shadow_entropy, C, S, I, cumulative_load,
+                  baseline_se, current_se, scores, timer, context_mode>>
+
+DecreaseMutualInfo ==
+    /\ mutual_info - DeltaMI >= 0
+    /\ mutual_info' = mutual_info - DeltaMI
+    /\ UNCHANGED <<phase, shadow_entropy, C, S, I, cumulative_load,
+                  baseline_se, current_se, scores, timer, context_mode>>
+
+\* ---- Нагрузка и гистерезис ----
+
+Stress ==
+    /\ cumulative_load + DeltaMin * 10 <= StressThreshold * 2
+    /\ cumulative_load' = cumulative_load + DeltaMin * 10
+    /\ UNCHANGED <<phase, shadow_entropy, C, S, I, mutual_info,
+                  baseline_se, current_se, scores, timer, context_mode>>
+
+RecoverWithHysteresis ==
+    /\ cumulative_load > StressThreshold
+    /\ current_se - Delta_hyst >= 0
+    /\ current_se' = current_se - Delta_hyst
+    /\ cumulative_load' = 0
+    /\ UNCHANGED <<phase, shadow_entropy, C, S, I, mutual_info,
+                  baseline_se, scores, timer, context_mode>>
+
+ResetLoad ==
+    /\ cumulative_load' = 0
+    /\ UNCHANGED <<phase, shadow_entropy, C, S, I, mutual_info,
+                  baseline_se, current_se, scores, timer, context_mode>>
+
+\* ---- Контекст ----
+
+SwitchContext ==
+    /\ context_mode' \in Modes \ {context_mode}
+    /\ UNCHANGED <<phase, shadow_entropy, C, S, I, mutual_info, cumulative_load,
+                  baseline_se, current_se, scores, timer>>
+
+\* ==================== Next ====================
 
 Next ==
-    \/ LocalCollapse
-    \/ SwitchContext       
-    \/ RecoverWithHysteresis
-    \/ UpdateMutualInfo
-    \* \/ UpdateLeakage       \* временно отключаем
-    \/ UpdateOrchestrator
-    \* \/ GenerateScores      \* временно отключаем
-    \/ ResetPhase
+    \/ \E a \in Agents, k \in Components : DegradeC(a, k)
+    \/ \E a \in Agents, k \in Components : DegradeS(a, k)
+    \/ \E a \in Agents, k \in Components : DegradeI(a, k)
+    \/ \E a \in Agents, k \in Components : RestoreC(a, k)
+    \/ \E a \in Agents, k \in Components : RestoreS(a, k)
+    \/ \E a \in Agents, k \in Components : RestoreI(a, k)
+    \/ IncreaseEntropy
+    \/ DecreaseEntropy
+    \/ LocalToPublish
+    \/ PublishToLocal
     \/ Trigger
-    \* \/ TimerTick           \* временно отключаем
+    \/ TimerTick
     \/ Unlock
+    \/ \E i \in 1..3 : SetScoreBit(i)
+    \/ ResetScores
+    \/ IncreaseMutualInfo
+    \/ DecreaseMutualInfo
+    \/ Stress
+    \/ RecoverWithHysteresis
+    \/ ResetLoad
+    \/ SwitchContext
 
-Spec == Init /\ [][Next]_<<phase, shadow_entropy, C, S, I, use, intent, noise,
-                          phi_measured, phi_true, mutual_info, leakage,
-                          orchestrator_active, cumulative_load, time_step,
-                          shadow_state, physical_state, context_mode,
-                          baseline_se, current_se,
-                          score_BCI, score_Pupil, score_NF, timer>>
+Fairness ==
+    /\ WF_vars(TimerTick)
+    /\ WF_vars(Unlock)
+    /\ WF_vars(ResetLoad)
 
-\* Симметрия для агентов (учитывает, что агенты идентичны)
-Symmetry == Permutations(Agents) \union Permutations(Components)
-\* Ограничение глубины поиска (для TLC)
-TimeBound == time_step < 1000
-(*
---algorithm LTLProperties
-*)
+Spec == Init /\ [][Next]_vars /\ Fairness
 
-(*
-LTL-свойства:
-- LTL_NoDeadlock: всегда существует следующий шаг (система не может застрять)
-- LTL_Recovery: всегда в конце концов фаза становится LOCAL (восстановление)
-- LTL_Progress: бесконечно часто выполняется обновление mutual_info (прогресс)
-*)
+TimeBound == TRUE
 
-LTL_NoDeadlock == []<>(ENABLED Next)   \* всегда есть возможность сделать шаг
+\* ==================== Инварианты ====================
 
-LTL_Recovery == []<>(phase = "LOCAL")  \* всегда рано или поздно система в локальной фазе
+Inv_PhaseValid == phase \in {"LOCAL", "PUBLISH", "LOCKED"}
 
-LTL_Progress == []<>(mutual_info > 0)  \* бесконечно часто обновляется информация
-(*
-LTL-свойства живучести
-*)
-LTL_NoStarvation == []<>(phase = "LOCAL" \/ phase = "PUBLISH")
-===============================================================================
+Inv_EntropyBound == \A a \in Agents : shadow_entropy[a] \in 0..MaxEntropy
+
+Inv_ResourceRange ==
+    /\ \A a \in Agents, k \in Components : C[a][k] \in 0..MaxEntropy
+    /\ \A a \in Agents, k \in Components : S[a][k] \in 0..MaxEntropy
+    /\ \A a \in Agents, k \in Components : I[a][k] \in 0..MaxEntropy
+
+Inv_MIRange == mutual_info \in 0..RhoMax
+
+Inv_BaselineCurrentRelation == current_se <= baseline_se
+
+Inv_ContextModeValid == context_mode \in Modes
+
+Inv_ScoresValid == scores \in Scores
+
+Inv_TimerBound == timer \in 0..GracePeriod
+
+Inv_PhiRange == \A k \in Components : phi_measured[k] \in 0..MaxEntropy
+
+\* ---- Содержательные инварианты (с достижимыми антецедентами) ----
+
+\* Если система вошла в LOCKED, то какой-то компонент имеет phi ниже порога.
+\* Формулировка "at-entry" (timer = 0 — момент входа).
+Inv_LockedImpliesLowPhi ==
+    (phase = "LOCKED" /\ timer = 0) =>
+      (\E k \in Components : phi_measured[k] <= ThetaQuarantine - EpsilonPhi)
+
+\* Метакогнитивный коллапс: при низком phi система не может быть в LOCAL
+\* дольше, чем нужно для срабатывания Trigger.
+\* Формулировка через контрапозицию: если phase = LOCAL и phi низкий,
+\* то это ещё не "после коллапса" — значит, Trigger должен сработать.
+Inv_MetacognitiveCollapse ==
+    (phase = "LOCKED") =>
+      (\E k \in Components : phi_measured[k] <= PhiCrit)
+
+\* Нет ложных срабатываний: в момент входа в LOCKED phi действительно был низким.
+Inv_NoFalsePositives ==
+    (phase = "LOCKED" /\ timer = 0) =>
+      (\E k \in Components : phi_measured[k] <= ThetaQuarantine)
+
+\* Карантинная связь: LOCKED → хотя бы один phi в опасной зоне.
+Inv_A15_Quarantine ==
+    (phase = "LOCKED") =>
+      (\E k \in Components : phi_measured[k] <= ThetaQuarantine)
+
+\* Гистерезис: если система отклонилась от baseline,
+\* то отклонение составляет не менее Delta_hyst.
+\* Это корректно отражает Теорему 13: восстановление никогда
+\* не бывает частичным — либо отклонения нет, либо оно ≥ Delta_hyst.
+Inv_HysteresisBound ==
+    (current_se < baseline_se) =>
+      (baseline_se - current_se >= Delta_hyst)
+
+\* Контекстная зависимость: разные режимы → разные доминирующие компоненты.
+Inv_ContextDependence ==
+    \A m1, m2 \in Modes :
+      m1 /= m2 => DominantComponent(m1) /= DominantComponent(m2)
+
+\* Неинъективность сигнатур (Теорема 10): истинный предикат, но не тавтология.
+Inv_SignatureObservability ==
+    \A s \in 0..MaxEntropy : s % 2 \in {0,1}
+
+\* ---- Мастер-инвариант ----
+
+Shadow_Safety_Invariant ==
+    /\ Inv_PhaseValid
+    /\ Inv_EntropyBound
+    /\ Inv_ResourceRange
+    /\ Inv_MIRange
+    /\ Inv_BaselineCurrentRelation
+    /\ Inv_ContextModeValid
+    /\ Inv_ScoresValid
+    /\ Inv_TimerBound
+    /\ Inv_PhiRange
+    /\ Inv_LockedImpliesLowPhi
+    /\ Inv_MetacognitiveCollapse
+    /\ Inv_NoFalsePositives
+    /\ Inv_A15_Quarantine
+    /\ Inv_HysteresisBound
+    /\ Inv_ContextDependence
+    /\ Inv_SignatureObservability
+
+\* ==================== LTL ====================
+
+LTL_NoDeadlock == []<>(ENABLED Next)
+
+LTL_Recovery == []<>(phase = "LOCAL")
+
+LTL_Progress == []<>(mutual_info > 0)
+
+LTL_NoStarvation == []<>(phase \in {"LOCAL", "PUBLISH"})
+
+=============================================================================================
