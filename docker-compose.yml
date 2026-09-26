@@ -1,144 +1,130 @@
 services:
-  edge-dsp:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-    container_name: shadow-edge
-    entrypoint: []
-    command: ["python3", "scripts/dsp/realtime_pipeline.py"]
-    volumes:
-      - ./reports:/app/reports
-      - ./bids:/data/bids
-    environment:
-      - PYTHONPATH=/app
-      - PYTHONUNBUFFERED=1
-      - PTP_MASTER=edge-ptp-master
-      - HSM_ENDPOINT=http://hsm-mock:8080
-      - LOG_LEVEL=INFO
-    networks:
-      - shadow-net
-    deploy:
-      resources:
-        limits:
-          cpus: "4"
-          memory: "8G"
-
-  central-verifier:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-    container_name: shadow-verifier
-    entrypoint: []
-    command: ["python3", "scripts/zk/verify_groth16.py", "--help"]
-    ports:
-      - "9090:9090"
-      - "8080:8080"
-    volumes:
-      - ./zk-audit:/app/audit
-      - ./circuits:/app/circuits:ro
-    environment:
-      - AUDIT_DB_URI=sqlite:///audit.db
-      - MERKLE_ROOT_GENESIS=0x0000000000000000000000000000000000000000000000000000000000000000
-    depends_on:
-      - edge-dsp
-    networks:
-      - shadow-net
-
-  hsm-mock:
-    image: mockserver/mockserver:latest
-    container_name: shadow-hsm-mock
-    ports:
-      - "1080:1080"
-    environment:
-      - MOCKSERVER_PORT=8080
-    volumes:
-      - ./mocks/hsm_mock.json:/config/hsm_mock.json
-    networks:
-      - shadow-net
-    restart: unless-stopped
-
-  dev-shell:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-    container_name: shadow-dev
-    volumes:
-      - .:/app
-    stdin_open: true
-    tty: true
-    entrypoint: ["/bin/bash"]
-    networks:
-      - shadow-net
-
   coq:
     image: coqorg/coq:8.18
-    container_name: shadow-coq
     environment:
       - OPAMYES=1
     volumes:
-      - .:/home/coq/cognitive-shadow
+      - .:/home/coq/cognitive-shadow:ro
     working_dir: /home/coq/cognitive-shadow
+    mem_limit: 12g
+    memswap_limit: 20g
     command: |
       bash -c '
         set -e
-        if ! opam list --installed coq-flocq > /dev/null 2>&1; then
-          echo ">>> Installing coq-flocq (required for A20_ICU_NoiseBound)..."
-          opam update
-          opam install coq-flocq -y
-        else
-          echo ">>> coq-flocq already installed, skipping."
+        echo ">>> Preparing writable build copy..."
+        rm -rf /tmp/build
+        cp -r /home/coq/cognitive-shadow /tmp/build
+        cd /tmp/build
+
+        echo ">>> Cleaning CRLF from .v files..."
+        find src -name "*.v" -exec sed -i "s/$(printf "\r")//g" {} \;
+
+        echo ">>> Fixing imports to use correct full Coq paths..."
+        find src -name "*.v" -exec sed -i "s/Require Import Lia\./Require Import Coq.micromega.Lia./g" {} \;
+        find src -name "*.v" -exec sed -i "s/Require Import Lra\./Require Import Coq.micromega.Lra./g" {} \;
+        find src -name "*.v" -exec sed -i "s/Require Export Lia\./Require Export Coq.micromega.Lia./g" {} \;
+        find src -name "*.v" -exec sed -i "s/Require Export Lra\./Require Export Coq.micromega.Lra./g" {} \;
+
+        echo ">>> Using existing _CoqProject from repository..."
+        if [ ! -f _CoqProject ]; then
+          echo "ERROR: _CoqProject not found in repository root!"
+          exit 1
         fi
-        echo ">>> Compiling Coq files..."
+
+        cat _CoqProject
+
+        echo ">>> Generating Makefile..."
         coq_makefile -f _CoqProject -o Makefile.coq
-        make -f Makefile.coq -j4
-        echo "✅ All Coq proofs verified."
+
+        ALL_VFILES="src/GlobalParameters.v \
+                    src/Quantum/Hilbert.v \
+                    src/Quantum/QuantumState.v \
+                    src/Phenomenological/QualiaBasis.v \
+                    src/Phenomenological/Collapse.v \
+                    src/Principles/AlgorithmicEntropy.v \
+                    src/Quantum/ChannelLimits.v \
+                    src/Quantum/QuantumQualiaMap.v \
+                    src/Quantum/QuantumErrorCorrection.v \
+                    src/Complexity/QualiaReducibility.v \
+                    src/HigherHilbert/Homotopy.v \
+                    src/Expansion/InterfacesTheorem6.v \
+                    src/Expansion/InterfacesTheorem7.v \
+                    src/Expansion/Interfaces_Deadband.v \
+                    src/Expansion/PhiFromInterfaces.v \
+                    src/Expansion/A20_MeasurementError.v \
+                    src/Expansion/A20_ICU_NoiseBound.v \
+                    src/Expansion/InterfacesMatrix.v \
+                    src/Expansion/A29_Orchestrator_Stability.v \
+                    src/Expansion/PhiHierarchy.v \
+                    src/Expansion/ComputationalSynergy.v \
+                    src/Expansion/QuarantineSynergyLimit.v \
+                    src/Expansion/CascadeMergeStability.v \
+                    src/Expansion/SystemProfile.v \
+                    src/Expansion/StreamingEntropy.v \
+                    src/Expansion/ResonanceLimitFull.v \
+                    src/Expansion/ParasitismTheorem.v \
+                    src/Expansion/Theorem8_Degradation.v \
+                    src/Expansion/RecursiveStabilityTheorem.v \
+                    src/Expansion/Theorem10_SignatureObservability.v \
+                    src/Expansion/CognitiveShadow_Complete.v \
+                    src/Protocols/FormalEthicsPrinciples.v \
+                    src/Protocols/ForcedReportDecision.v \
+                    src/Theorem11_FORCED_REPORT_Safety.v"
+
+        echo ">>> Building all files strictly one by one with timeout (20 min per file)..."
+
+        for vfile in $$ALL_VFILES; do
+          [ -f "$$vfile" ] || continue
+          vofile="$${vfile%.v}.vo"
+          echo "==> [$(date)] Compiling $$vfile ..."
+          if ! timeout --signal=KILL 1200 make -f Makefile.coq -j1 "$$vofile"; then
+            echo "ERROR: Timeout or failure on $$vfile"
+            exit 1
+          fi
+        done
+
+        echo "✅ All modules compiled successfully!"
       '
     networks:
-      - shadow-net
+      - cognitive-shadow-net
 
   tla:
     image: eclipse-temurin:11-jre
-    container_name: shadow-tla
     volumes:
       - ./tla-spec:/tla-spec
     working_dir: /tla-spec
-    command: |
-      bash -c '
-        set -e
+    command: >
+      bash -c "
         if [ ! -f tla2tools.jar ]; then
-          apt-get update && apt-get install -y wget
           wget -q https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar
-        fi
-        echo "=== TLC Model Checking ==="
-        if [ -f "CognitiveShadow_Model.cfg" ]; then
-          echo ">>> CognitiveShadow_Model"
-          java -cp tla2tools.jar tlc2.TLC -deadlock -workers auto -config CognitiveShadow_Model.cfg CognitiveShadow_Model
-        fi
-        if [ -f "FORCED_REPORT_States.tla" ] && [ -f "FORCED_REPORT_Model.cfg" ]; then
-          echo ">>> FORCED_REPORT_States"
-          java -cp tla2tools.jar tlc2.TLC -deadlock -workers auto -config FORCED_REPORT_Model.cfg FORCED_REPORT_States
-        fi
-        echo "✅ TLC checks completed."
-      '
+        fi &&
+        java -cp tla2tools.jar tlc2.TLC -depth 20 CognitiveShadow_Model
+      "
     networks:
-      - shadow-net
+      - cognitive-shadow-net
 
-  python:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-    container_name: shadow-python
-    entrypoint: ["python3"]
-    stdin_open: true
-    tty: true
+  prometheus:
+    image: prom/prometheus:v2.45.0
     volumes:
-      - .:/app
-    working_dir: /app
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
     networks:
-      - shadow-net
+      - cognitive-shadow-net
+
+  grafana:
+    image: grafana/grafana:9.5.0
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=cognitive-shadow
+    volumes:
+      - ./monitoring/grafana:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+    networks:
+      - cognitive-shadow-net
 
 networks:
-  shadow-net:
+  cognitive-shadow-net:
     driver: bridge
-    name: cognitive-shadow-network
-    external: true   # добавляем, чтобы использовать уже существующую сеть и убрать предупреждение

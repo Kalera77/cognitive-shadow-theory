@@ -1,35 +1,67 @@
 -Q src CognitiveShadow
+
+# ============================================================
+# Уровень 0: Глобальные параметры (фундамент, от него зависят все)
+# ============================================================
 src/GlobalParameters.v
+
+# ============================================================
+# Уровень 1: Базовые типы (квантовые и феноменологические)
+# ============================================================
 src/Quantum/Hilbert.v
 src/Quantum/QuantumState.v
 src/Phenomenological/QualiaBasis.v
 src/Phenomenological/Collapse.v
+
+# ============================================================
+# Уровень 2: Базовые принципы и каналы
+# ============================================================
 src/Principles/AlgorithmicEntropy.v
 src/Quantum/ChannelLimits.v
 src/Quantum/QuantumQualiaMap.v
 src/Quantum/QuantumErrorCorrection.v
 src/Complexity/QualiaReducibility.v
 src/HigherHilbert/Homotopy.v
+
+# ============================================================
+# Уровень 3: Динамическое расширение — интерфейсы
+# ============================================================
 src/Expansion/InterfacesTheorem6.v
 src/Expansion/InterfacesTheorem7.v
 src/Expansion/Interfaces_Deadband.v
 src/Expansion/PhiFromInterfaces.v
 src/Expansion/A20_MeasurementError.v
+src/Expansion/A20_ICU_NoiseBound.v           
+src/Expansion/InterfacesMatrix.v             
+src/Expansion/A29_Orchestrator_Stability.v    
 src/Expansion/PhiHierarchy.v
 src/Expansion/ComputationalSynergy.v
 src/Expansion/QuarantineSynergyLimit.v
+
+# ============================================================
+# Уровень 4: Динамическое расширение — теоремы коллапса и паразитизма
+# ============================================================
 src/Expansion/CascadeMergeStability.v
 src/Expansion/SystemProfile.v
 src/Expansion/StreamingEntropy.v
-src/Expansion/ParasitismTheorem.v
+src/Expansion/ResonanceLimitFull.v            
+src/Expansion/ParasitismTheorem.v             
 src/Expansion/Theorem8_Degradation.v
 src/Expansion/RecursiveStabilityTheorem.v
-src/Expansion/Theorem10_SignatureObservability.v
-src/Expansion/CognitiveShadow_Complete.v
-src/Expansion/InterfacesMatrix.v
-src/Expansion/A29_Orchestrator_Stability.v
-src/Expansion/A20_ICU_NoiseBound.v
-src/Protocols/ForcedReportDecision.v
-src/Protocols/FormalEthicsPrinciples.v
-src/Theorem11_FORCED_REPORT_Safety.v
+src/Expansion/Theorem10_SignatureObservability.v  
 
+# ============================================================
+# Уровень 5: Полная сборка ядра
+# ============================================================
+src/Expansion/CognitiveShadow_Complete.v
+
+# ============================================================
+# Уровень 6: Протоколы (зависят от всех теорем выше)
+# ============================================================
+src/Protocols/FormalEthicsPrinciples.v        
+src/Protocols/ForcedReportDecision.v          
+
+# ============================================================
+# Уровень 7: Теорема 11 (зависит от протоколов)
+# ============================================================
+src/Theorem11_FORCED_REPORT_Safety.v          

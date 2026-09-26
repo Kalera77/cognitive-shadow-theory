@@ -169,3 +169,4 @@ Axiom min_profile_variation :
 
 (* Helper tactic *)
 Ltac Rsimpl := repeat (rewrite Rplus_0_l || rewrite Rplus_0_r || rewrite Rmult_0_l || rewrite Rmult_0_r || rewrite Rmult_1_l || rewrite Rmult_1_r).
+

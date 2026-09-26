@@ -90,6 +90,46 @@ Section AlgorithmicEntropy.
      Predictability horizon: once entropy reaches H_min / 0.51,
      predictability is bounded by 0.51.
   *)
+  (* ============================================================ *)
+  (* Параметризованная версия: порог = 1/2 + ε                   *)
+  (* ============================================================ *)
+     Theorem predictability_horizon_param :
+      forall (s : ShadowState) (H_min ε : R) (t : nat),
+        H_min > 0 ->
+        0 < ε -> ε < 1/2 ->
+        entropy (evolve s t) >= H_min / (1/2 + ε) ->
+        H_min / entropy (evolve s t) <= 1/2 + ε.
+    Proof.
+      intros s H_min ε t Hmin_pos ε_pos ε_lt_half H_bound.
+      set (θ := 1/2 + ε).
+      set (H_t := entropy (evolve s t)).
+      assert (H_θ_pos : 0 < θ). { unfold θ; lra. }
+      apply Rge_le in H_bound.                (* H_min / θ <= H_t *)
+      assert (H_t_pos : 0 < H_t).
+      { apply Rlt_le_trans with (r2 := H_min / θ).
+        - apply Rmult_lt_0_compat.
+          + exact Hmin_pos.
+          + apply Rinv_0_lt_compat. exact H_θ_pos.
+        - exact H_bound. }
+      (* Шаг 1: H_min <= H_t * θ *)
+      assert (H_θ_nonneg : 0 <= θ) by lra.
+      assert (H_temp : (H_min / θ) * θ <= H_t * θ).
+      { apply Rmult_le_compat_r; [exact H_θ_nonneg | exact H_bound]. }
+      assert (H_eq : (H_min / θ) * θ = H_min).
+      { field; lra. }
+      rewrite H_eq in H_temp.
+      (* Теперь H_temp : H_min <= H_t * θ *)
+      (* Шаг 2: H_min / H_t <= θ *)
+      apply Rmult_le_reg_l with (r := H_t).
+      - exact H_t_pos.
+      - assert (H_eq2 : H_t * (H_min / H_t) = H_min).
+        { field; lra. }
+        rewrite H_eq2.
+        exact H_temp.
+    Qed.
+  (* ============================================================ *)
+  (* Совместимость: старая версия с порогом 0.51 как королларий *)
+  (* ============================================================ *)
   Theorem predictability_horizon :
       forall (s : ShadowState) (H_min : R) (t : nat),
         H_min > 0 ->
@@ -97,33 +137,14 @@ Section AlgorithmicEntropy.
         H_min / entropy (evolve s t) <= 0.51.
     Proof.
       intros s H_min t Hmin_pos H_bound.
-      set (H_t := entropy (evolve s t)).
-      apply Rge_le in H_bound.   (* H_min / 0.51 <= H_t *)
-      assert (H_t_pos : 0 < H_t).
-      {
-        apply Rlt_le_trans with (r2 := H_min / 0.51).
-        - apply Rmult_lt_0_compat.
-          + exact Hmin_pos.
-          + apply Rinv_0_lt_compat. lra.
-        - exact H_bound.
-      }
-      (* Multiply H_bound by 0.51 to get H_min <= H_t * 0.51 *)
-      apply (Rmult_le_compat_r 0.51) in H_bound; [| lra].
-      replace ((H_min / 0.51) * 0.51) with H_min in H_bound by (field; lra).
-      (* Rearrange to H_min <= 0.51 * H_t *)
-      rewrite Rmult_comm in H_bound.
-      (* Multiply goal by H_t > 0 *)
-      apply (Rmult_le_reg_l H_t).
-      - exact H_t_pos.
-      - rewrite Rmult_comm.
-        unfold Rdiv.
-        rewrite Rmult_assoc.
-        rewrite Rinv_l.
-        + rewrite Rmult_1_r.
-          (* goal now: H_min <= H_t * 0.51 *)
-          rewrite Rmult_comm.
-          exact H_bound.
-        + apply Rgt_not_eq, H_t_pos.
+      assert (H_eq : (0.51 : R) = 1/2 + 1/100) by lra.
+      rewrite H_eq in H_bound.
+      rewrite H_eq.
+      apply predictability_horizon_param with (ε := 1/100).
+      - exact Hmin_pos.
+      - lra.
+      - lra.
+      - exact H_bound.
     Qed.
 
 End AlgorithmicEntropy.

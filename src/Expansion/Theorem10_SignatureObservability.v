@@ -1,12 +1,14 @@
 (* ==========================================================================
-   Модуль: Theorem10_SignatureObservability.v
+    Модуль: Theorem10_SignatureObservability.v (исправленная аксиоматика)
    Назначение: Формализация Принципа наблюдаемости сигнатур.
    
    Теорема 10 утверждает:
    1. Существует отображение сигнатур signature_map : ShadowStates -> PhysicalStates
    2. Это отображение неинъективно (существуют коллизии)
    3. Точность реконструкции ограничена снизу δ_min(M)
-   4. AUC любого классификатора строго между 0.5 и 1
+   4a. СУЩЕСТВУЕТ информативный классификатор с AUC > 0.5
+   4b. НИ ОДИН классификатор не достигает AUC = 1
+   4c. НИ ОДИН согласованный классификатор не имеет AUC ≤ 0.5
    
    Это формализует эпистемологический принцип: мы не можем наблюдать саму 
    когнитивную тень, но можем наблюдать её сигнатуры с фундаментальными 
@@ -95,11 +97,26 @@ Section SignatureObservability.
       physical_dist (signature_map s) 
                     (signature_map (reconstruction (signature_map s))) >= delta_min.
   
-  (** A10.4: AUC строго между 0.5 и 1 для любого классификатора *)
-  Axiom A10_auc_bounds :
-    forall (c : PhysicalStates -> bool) (l : ShadowStates -> bool),
-      0.5 < AUC c l < 1.
+  (* ==================================================================== *)
+  (** ИСПРАВЛЕННЫЕ АКСИОМЫ границ AUC (Теорема 10, пункт 4) *)
+  (* ==================================================================== *)
 
+  (** A10.4a: СУЩЕСТВУЕТ информативный классификатор.
+      Выражает информативность сигнатур: они несут информацию, но не полную. *)
+  Axiom A10_auc_exists :
+    exists c : PhysicalStates -> bool,
+      0.5 < AUC c true_label /\ AUC c true_label < 1.
+
+  (** A10.4b: НИ ОДИН классификатор не достигает AUC = 1.
+      Выражает принципиальную неполноту реконструкции. *)
+  Axiom A10_auc_not_perfect :
+    forall c : PhysicalStates -> bool,
+      AUC c true_label < 1.
+
+  (** A10.4c: НИ ОДИН согласованный классификатор не хуже случайного. *)
+  Axiom A10_auc_above_chance :
+    forall c : PhysicalStates -> bool,
+      AUC c true_label >= 0.5.
   (* ========================================================================
      4. Леммы
      ======================================================================== *)
@@ -122,20 +139,39 @@ Qed.
   
   (** Лемма 10.2: Верхняя граница на AUC *)
   Lemma auc_upper_bound :
-    forall (c : PhysicalStates -> bool) (l : ShadowStates -> bool),
-      AUC c l < 1.
+    forall c : PhysicalStates -> bool,
+      AUC c true_label < 1.
   Proof.
-    intros c l.
-    apply A10_auc_bounds.
+    intros c.
+    apply A10_auc_not_perfect.
   Qed.
-  
+
   (** Лемма 10.3: Нижняя граница на AUC *)
   Lemma auc_lower_bound :
-    forall (c : PhysicalStates -> bool) (l : ShadowStates -> bool),
-      AUC c l > 0.5.
+    forall c : PhysicalStates -> bool,
+      AUC c true_label >= 0.5.
   Proof.
-    intros c l.
-    apply A10_auc_bounds.
+    intros c.
+    apply A10_auc_above_chance.
+  Qed.
+
+   (** Лемма 10.5: AUC в диапазоне [0.5, 1) *)
+  Lemma auc_in_range :
+    forall c : PhysicalStates -> bool,
+      0.5 <= AUC c true_label /\ AUC c true_label < 1.
+  Proof.
+    intros c. split.
+    - apply Rge_le. apply auc_lower_bound.
+    - apply auc_upper_bound.
+  Qed.
+
+  (** Лемма 10.6: существует классификатор строго лучше случайного *)
+  Lemma auc_strictly_informative :
+    exists c : PhysicalStates -> bool,
+      0.5 < AUC c true_label.
+  Proof.
+    destruct A10_auc_exists as [c [Hgt _]].
+    exists c. exact Hgt.
   Qed.
   
   (** Лемма 10.4: delta_min положительна *)
@@ -149,15 +185,15 @@ Qed.
      5. Основная теорема
      ======================================================================== *)
   
-  (** Теорема 10: Принцип наблюдаемости сигнатур *)
+  (** Теорема 10: Принцип наблюдаемости сигнатур (исправленная версия) *)
   Theorem SignatureObservability :
     (forall s : ShadowStates, exists p : PhysicalStates, signature_map s = p) /\
     (exists s1 s2 : ShadowStates, s1 <> s2 /\ signature_map s1 = signature_map s2) /\
     (forall s : ShadowStates,
       physical_dist (signature_map s) 
                     (signature_map (reconstruction (signature_map s))) >= delta_min) /\
-    (exists (c : PhysicalStates -> bool) (l : ShadowStates -> bool),
-      0.5 < AUC c l < 1).
+    (exists c : PhysicalStates -> bool, 0.5 < AUC c true_label) /\
+    (forall c : PhysicalStates -> bool, AUC c true_label < 1).
 Proof.
   split.
   - (* 1. Сигнатуры существуют *)
@@ -168,32 +204,35 @@ Proof.
     + split.
       * (* 3. Точность реконструкции ограничена *)
         exact A10_bounded_accuracy.
-      * (* 4. AUC строго между 0.5 и 1 *)
-        exists classifier, true_label.
-        apply A10_auc_bounds.
+      * split.
+        -- (* 4a. Существует информативный классификатор *)
+           destruct A10_auc_exists as [c [Hgt _]].
+           exists c. exact Hgt.
+        -- (* 4b. Ни один не достигает 1 *)
+           exact A10_auc_not_perfect.
 Qed.
 
   (* ========================================================================
      6. Следствия
      ======================================================================== *)
   
-  (** Следствие 10.1: AUC ≠ 1 из-за неинъективности *)
-Corollary auc_not_one :
-    forall (c : PhysicalStates -> bool) (l : ShadowStates -> bool),
-      AUC c l <> 1.
-Proof.
-  intros c l H.
-  assert (H1 : AUC c l < 1) by apply auc_upper_bound.
-  rewrite H in H1.
-  lra.
-Qed.
-  
-  (** Следствие 10.2: AUC > 0.5 из-за информативности сигнатур *)
-  Corollary auc_above_chance :
-    forall (c : PhysicalStates -> bool) (l : ShadowStates -> bool),
-      AUC c l > 0.5.
+   (** Следствие 10.1: AUC ≠ 1 из-за неинъективности *)
+  Corollary auc_not_one :
+    forall c : PhysicalStates -> bool,
+      AUC c true_label <> 1.
   Proof.
-    intros c l.
+    intros c H.
+    assert (H1 : AUC c true_label < 1) by apply auc_upper_bound.
+    rewrite H in H1.
+    lra.
+  Qed.
+
+  (** Следствие 10.2: AUC >= 0.5 из-за информативности сигнатур *)
+  Corollary auc_above_chance_cor :
+    forall c : PhysicalStates -> bool,
+      AUC c true_label >= 0.5.
+  Proof.
+    intros c.
     apply auc_lower_bound.
   Qed.
   

@@ -37,8 +37,8 @@ Inductive Representation : Type :=
 
 Record InterfaceParams := mkInterface {
   C_kr :> R;
-  S_kr :> R;
-  I_kr :> R
+  S_kr :  R;
+  I_kr :  R
 }.
 
 Definition InterfaceMatrix := Component -> Representation -> InterfaceParams.

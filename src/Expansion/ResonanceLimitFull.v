@@ -18,7 +18,7 @@ Section ResonanceLimitFull.
   (* Minimum entropy required for meaningful communication *)
   Parameter H_min : R.
   Axiom H_min_pos : H_min > 0.
-
+    
   (* Mutual information threshold – calibration constant of the model *)
   Parameter rho_max : R.
   Axiom rho_max_val : rho_max = 0.85.   (* value from GlobalParameters, repeated for local context *)
@@ -46,27 +46,27 @@ Section ResonanceLimitFull.
   Proof.
     intros s1 s2 Hinv1 Hinv2 Hmi.
     unfold Inv_ShadowPreservation.
-    apply Rlt_not_le.
-    apply resonance_limit_axiom; assumption.
+    intro Hcontra.
+    pose proof (resonance_limit_axiom s1 s2 Hmi) as Hlt.
+    lra.
   Qed.
 
   (* ---------- Consistency with existing consensus_check ---------- *)
-  (* consensus_check is defined in CognitiveShadow_Complete.v as:
-     let rho := mutual_info s1 s2 in
-     if Rle_dec rho rho_max then ... else HALT_RESONANCE.
-     Thus it already returns HALT_RESONANCE when mutual_info > rho_max.
-     Here we show that this decision is necessary for preserving the invariant. *)
+  (* consensus_check (defined later in CognitiveShadow_Complete.v) halts
+     with HALT_RESONANCE whenever mutual_info > rho_max. The lemma below
+     records the semantic content of that decision: merging under such
+     mutual information destroys the shadow invariant. The actual
+     constructor HALT_RESONANCE is intentionally not referenced here to
+     avoid a dependency on a module compiled later in the build order. *)
   Lemma halt_resonance_preserves_invariant :
     forall s1 s2,
       mutual_info s1 s2 > rho_max ->
       (Inv_ShadowPreservation s1 /\ Inv_ShadowPreservation s2 ->
-       exists decision, decision = HALT_RESONANCE /\ ~ Inv_ShadowPreservation (merge s1 s2)).
+       ~ Inv_ShadowPreservation (merge s1 s2)).
   Proof.
     intros s1 s2 Hmi [Hinv1 Hinv2].
-    split; [reflexivity |].
     apply resonance_violates_invariant; assumption.
   Qed.
-
   (* Additionally: if mutual information does not exceed the threshold, merging is allowed
      (axiom Δ_min in consensus_check ensures merging does not destroy the shadow).
      This is already implemented in the original consensus_check via the check rho >= delta_min. *)
