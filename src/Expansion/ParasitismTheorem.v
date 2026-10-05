@@ -1,4 +1,8 @@
-(** * ParasitismTheorem.v – unconditional limit of semantic parasitism (Theorem 3.9) *)
+(** * ParasitismTheorem.v – unconditional limit of semantic parasitism / diversity collapse (Theorem 3.9)
+    
+    Historical name: "parasitism limit" (from parasitic shadow s₂).
+    Working name: "diversity collapse limit" (covers GAN, LLM, agents, cybersecurity, and other systems losing diversity).
+    Both names are equivalent. Module name kept as historical identifier. *)
 Require Import Coq.Reals.Reals.
 Require Import Coq.Reals.RIneq.
 Require Import Coq.micromega.Lia.
