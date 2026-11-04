@@ -3,6 +3,8 @@
 > The Cognitive Shadow Theory establishes **formal limits on the complete digitization of consciousness**.  
 > Теория когнитивной тени устанавливает **формальные пределы полной оцифровки сознания**.
 
+**Version v3.2** (November 2026) · [Release notes](https://github.com/Kalera77/cognitive-shadow-theory/releases/tag/v3.2)
+
 ---
 
 ## 📖 Read the full documentation / Читать полную документацию
@@ -14,9 +16,15 @@
 
 ## 🚀 Key Results / Ключевые результаты
 
+**Empirical / Эмпирика:**
 - **AUC = 0.947** (LIS vs healthy) · **AUC = 0.887** (cross‑population)  
 - Specificity confirmed / Специфичность подтверждена: AUC ≈ 0.5 for controls  
 - **Theorem 10:** AUC ∈ (0.5, 1) for any consciousness classifier  
+
+**Formal verification / Формальная верификация:**
+- **Coq 8.18+:** 43 modules, **0 `admit`, 0 errors** (`src/`)
+- **TLA⁺ 2.19 (TLC):** 225,000 distinct states verified, depth 22, **no violations, no deadlock** (`tla-spec/`)
+- **3/4 SDT bridge theorems proven** (immiseration→P2, elite→P2, fiscal→P3); 1 bridge axiom (SG→P6) documented in `ru/EXTENSIONS/Microfoundations_for_SDT.md` §6.10
 
 ---
 

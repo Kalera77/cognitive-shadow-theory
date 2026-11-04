@@ -67,9 +67,18 @@ services:
                     src/Expansion/RecursiveStabilityTheorem.v \
                     src/Expansion/Theorem10_SignatureObservability.v \
                     src/Expansion/CognitiveShadow_Complete.v \
-                    src/Protocols/FormalEthicsPrinciples.v \
-                    src/Protocols/ForcedReportDecision.v \
-                    src/Theorem11_FORCED_REPORT_Safety.v"
+                    src/Theorem11_FORCED_REPORT_Safety.v
+                    src/Ethics/ShadowEthics_v3_Foundations.v
+                    src/Ethics/ShadowEthics_v3_Relational.v
+                    src/Ethics/ShadowEthics_v3_Arbitration.v
+                    src/Ethics/ShadowEthics_v3_ProxyConsent.v
+                    src/Ethics/ShadowEthics_v3_Operator.v
+                    src/Ethics/ShadowEthics_v3_Alignment.v
+                    src/Ethics/ShadowEthics_v3_MultiAgent.v
+                    src/Ethics/ForcedReportDecision_v3.v
+                    src/Ethics/ShadowEthics_v3_ClinicalAudit.v
+                    src/Extensions/ShadowEthicsInvariants.v
+                    src/Extensions/SDTMicrofoundations.v"
 
         echo ">>> Building all files strictly one by one with timeout (20 min per file)..."
 

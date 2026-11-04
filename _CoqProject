@@ -55,13 +55,25 @@ src/Expansion/Theorem10_SignatureObservability.v
 # ============================================================
 src/Expansion/CognitiveShadow_Complete.v
 
+        
 # ============================================================
-# Уровень 6: Протоколы (зависят от всех теорем выше)
-# ============================================================
-src/Protocols/FormalEthicsPrinciples.v        
-src/Protocols/ForcedReportDecision.v          
-
-# ============================================================
-# Уровень 7: Теорема 11 (зависит от протоколов)
+# Уровень 6: Теорема 11 (зависит от протоколов)
 # ============================================================
 src/Theorem11_FORCED_REPORT_Safety.v          
+# ============================================================
+# Уровень 7: Этика v3 (порядок зависимостей!)
+# ============================================================
+src/Ethics/ShadowEthics_v3_Foundations.v
+src/Ethics/ShadowEthics_v3_Relational.v
+src/Ethics/ShadowEthics_v3_Arbitration.v
+src/Ethics/ShadowEthics_v3_ProxyConsent.v
+src/Ethics/ShadowEthics_v3_Operator.v
+src/Ethics/ShadowEthics_v3_Alignment.v
+src/Ethics/ShadowEthics_v3_MultiAgent.v
+src/Ethics/ForcedReportDecision_v3.v
+src/Ethics/ShadowEthics_v3_ClinicalAudit.v
+# ============================================================
+# Уровень 8: Расширения 
+# ============================================================
+src/Extensions/ShadowEthicsInvariants.v
+src/Extensions/SDTMicrofoundations.v
